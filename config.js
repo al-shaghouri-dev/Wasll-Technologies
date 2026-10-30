@@ -2,7 +2,7 @@
 window.WASL = {
   name: "WASL Technologies",
   logo: "assets/logo.jpg",
-  siteUrl: "",              // deployed URL used by the QR code (empty = current address)
+  siteUrl: "https://waslltechnologies.vercel.app/", // primary site: QR codes and share links point here
   // Contact forms: paste a Formspree (or similar) endpoint URL, e.g. "https://formspree.io/f/xxxxxxx". Empty = demo mode (nothing is sent by the site itself).
   formEndpoint: "https://formspree.io/f/mrppbwyo",
   // Stats: only items with a real numeric value are shown. demo:true shows labelled sample numbers (never publish with demo:true).

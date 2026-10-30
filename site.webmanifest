@@ -1,0 +1,13 @@
+{
+  "name": "WASL Technologies",
+  "short_name": "WASL",
+  "description": "Connecting Ideas With Technology.",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#08080a",
+  "theme_color": "#08080a",
+  "icons": [
+    { "src": "assets/favicon.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

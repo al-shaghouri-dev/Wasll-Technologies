@@ -72,8 +72,9 @@
   const ready = resolve();
 
   // ---------- presentation ----------
-  const fmt = n => n.startsWith('1') && n.length === 11 ? `+1 ${n.slice(1, 4)} ${n.slice(4, 7)} ${n.slice(7)}`
-    : n.startsWith('963') ? `+963 ${n.slice(3, 6)} ${n.slice(6, 9)} ${n.slice(9)}` : '+' + n;
+  // Display format: +1 613 305 0377 for North America, +CCC XXX XXX XXX otherwise.
+  const fmt = n => n.length === 11 && n[0] === '1' ? `+1 ${n.slice(1, 4)} ${n.slice(4, 7)} ${n.slice(7)}`
+    : n.length === 12 ? `+${n.slice(0, 3)} ${n.slice(3, 6)} ${n.slice(6, 9)} ${n.slice(9)}` : '+' + n;
   const t = k => (window.WASLi18n ? window.WASLi18n.t(k) : k);
   const link = n => `https://wa.me/${n}?text=${encodeURIComponent(t('wa.message'))}`;
   const flag = { CA: '🇨🇦', SY: '🇸🇾' };
@@ -87,7 +88,7 @@
         const a = document.createElement('a');
         a.className = 'wa-line';
         a.href = link(c.number); a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.innerHTML = `<span class="wa-flag" aria-hidden="true">${flag[c.id]}</span><span class="wa-meta"><b></b><span dir="ltr"></span></span>`;
+        a.innerHTML = `<span class="wa-flag" aria-hidden="true">${flag[c.id]}</span><span class="wa-meta"><b></b><span dir="ltr"></span></span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg>`;
         a.querySelector('b').textContent = t('wa.country.' + c.id);
         a.querySelector('[dir]').textContent = fmt(c.number);
         el.append(a);
