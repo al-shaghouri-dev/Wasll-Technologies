@@ -12,9 +12,9 @@
   // ---------- Router ----------
   // "#/web" style hashes are pages; plain "#id" hashes scroll within the home page.
   // Old links (#/work, #/about, #/faq, #/contact) keep working.
-  const VIEWS = { '/': 'home', '/web': 'web', '/menus': 'menus', '/gifts': 'gifts', '/privacy': 'privacy', '/terms': 'terms' };
+  const VIEWS = { '/': 'home', '/web': 'web', '/apps': 'apps', '/menus': 'menus', '/gifts': 'gifts', '/music': 'music', '/privacy': 'privacy', '/terms': 'terms' };
   const LEGACY = { '/services': 'services', '/work': 'work', '/about': 'about', '/faq': 'faq', '/contact': 'contact' };
-  const TITLES = { home: 'meta.title', web: 'title.web', menus: 'title.menus', gifts: 'title.gifts', privacy: 'title.privacy', terms: 'title.terms', notfound: 'title.notfound' };
+  const TITLES = { home: 'meta.title', web: 'title.web', apps: 'title.apps', menus: 'title.menus', gifts: 'title.gifts', music: 'title.music', privacy: 'title.privacy', terms: 'title.terms', notfound: 'title.notfound' };
   let current = null;
 
   function show(view, focus) {
@@ -241,7 +241,7 @@
   const gn = $('#gn'), gm = $('#gm'), gp = $('#gp');
   function renderGift() {
     if (!gp) return;
-    gp.className = 'gift-prev t-' + theme;
+    gp.className = 'letter gift-prev t-' + theme;
     $('#gpn').textContent = gn.value.trim() || t('gp.def.name');
     $('#gpm').textContent = gm.value.trim() || t('gp.def.msg');
     $$('#gt .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === theme));
@@ -249,7 +249,9 @@
   if (gp) {
     $$('#gt .chip').forEach(b => b.addEventListener('click', () => { theme = b.dataset.t; renderGift(); }));
     gn.addEventListener('input', renderGift); gm.addEventListener('input', renderGift);
-    $('#gr').addEventListener('click', () => { gn.value = ''; gm.value = ''; theme = 'burgundy'; renderGift(); gn.focus(); });
+    $('#gr').addEventListener('click', () => { gn.value = ''; gm.value = ''; theme = 'burgundy'; renderGift(); $('#genv').classList.remove('open'); gn.focus(); });
+    $('#gopen').addEventListener('click', () => $('#genv').classList.toggle('open'));
+    gn.addEventListener('input', () => $('#genv').classList.add('open'), { once: true });
   }
 
   // ---------- Forms (Formspree; success only on HTTP 2xx, typed data kept on failure) ----------
@@ -313,6 +315,95 @@
   document.addEventListener('error', e => { if (e.target.tagName === 'IMG') imgFail(e.target); }, true);
   $$('img[data-fb]').forEach(i => { if (i.complete && !i.naturalWidth) imgFail(i); });
 
+  // ---------- v4: rise reveals, parallax, tilt, showcase interactions ----------
+  const io2 = 'IntersectionObserver' in window && !RM ? new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    if (el.matches('[data-envelope]')) setTimeout(() => el.classList.add('open'), 500);
+    else if (el.matches('.cap-n[data-count]')) countUp(el);
+    else el.classList.add('in');
+    io2.unobserve(el);
+  }), { threshold: .2, rootMargin: '0px 0px -8% 0px' }) : null;
+  const revealables = $$('.rise, .connector, [data-envelope], .cap-n[data-count]');
+  if (io2) revealables.forEach(el => io2.observe(el));
+  else revealables.forEach(el => { el.classList.add('in'); if (el.matches('[data-envelope]')) el.classList.add('open'); });
+  function countUp(el) {
+    const n = +el.dataset.count, t0 = performance.now();
+    const step = now => { const p = Math.min(1, (now - t0) / 1200); el.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+    el.textContent = '0'; requestAnimationFrame(step);
+  }
+
+  // Pause decorative animations in scenes that are off-screen
+  if ('IntersectionObserver' in window) {
+    const po = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('paused', !e.isIntersecting)), { rootMargin: '100px' });
+    $$('.scene, .page-hero, .caps-sec').forEach(s => po.observe(s));
+  }
+  if (RM) { const a = $('.ascent'); if (a && a.pauseAnimations) a.pauseAnimations(); }
+
+  // Parallax (uses the independent `translate` property so it never fights reveal transforms)
+  const par = RM ? [] : $$('[data-speed]');
+  let ticking = false;
+  function parallax() {
+    ticking = false;
+    const vh = innerHeight;
+    par.forEach(el => {
+      const r = el.parentElement.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > vh + 200) return;
+      const d = (r.top + r.height / 2 - vh / 2) * +el.dataset.speed;
+      el.style.translate = `0 ${d.toFixed(1)}px`;
+    });
+    const sp = document.documentElement;
+    sp.style.setProperty('--sp', (scrollY / Math.max(1, sp.scrollHeight - innerHeight)).toFixed(4));
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(parallax); } }, { passive: true });
+
+  // 3D tilt on the hero stage and service visuals (desktop pointers only)
+  if (fine && !RM) {
+    const tilt = (host, target, max) => {
+      host.addEventListener('pointermove', e => {
+        const r = host.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        target.style.setProperty('--ry', (x * max).toFixed(2) + 'deg'); target.style.setProperty('--rx', (-y * max * .7).toFixed(2) + 'deg');
+      });
+      host.addEventListener('pointerleave', () => { target.style.removeProperty('--ry'); target.style.removeProperty('--rx'); });
+    };
+    const st = $('.stage-in'); if (st) tilt($('.hero'), st, 16);
+    $$('.scene-vis.tilt').forEach(v => tilt(v.closest('.scene'), v, 7));
+    $$('.magnetic').forEach(b => {
+      b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .16}px,${(e.clientY - r.top - r.height / 2) * .26}px)`; });
+      b.addEventListener('pointerleave', () => { b.style.transform = ''; });
+    });
+  }
+
+  // App concept: tap the tabs, or let it cycle while visible
+  $$('[data-app]').forEach(app => {
+    const tabs = $$('.app-tabs button', app), screens = $$('.app-screen', app); let i = 0, hold = false;
+    const showS = n => { i = n; tabs.forEach(b => b.classList.toggle('on', +b.dataset.t === n)); screens.forEach(s => s.classList.toggle('on', +s.dataset.s === n)); };
+    tabs.forEach(b => b.addEventListener('click', () => { hold = true; showS(+b.dataset.t); }));
+    app.addEventListener('pointerenter', () => { hold = true; }); app.addEventListener('pointerleave', () => { hold = false; });
+    if (!RM) setInterval(() => { if (!hold && !document.hidden && app.getBoundingClientRect().top < innerHeight && app.getBoundingClientRect().bottom > 0) showS((i + 1) % screens.length); }, 3200);
+  });
+  // Menu concept: categories cycle
+  $$('[data-cycle]').forEach(c => {
+    const s = $$('span', c); let i = 0;
+    if (!RM) setInterval(() => { if (document.hidden) return; s[i].classList.remove('on'); i = (i + 1) % s.length; s[i].classList.add('on'); }, 2200);
+  });
+  // Waveform bars get organic heights
+  $$('.wave i').forEach((b, k) => { const h = 18 + Math.abs(Math.sin(k * 1.7) * 62 + Math.cos(k * .6) * 20); b.style.setProperty('--h', Math.min(100, h).toFixed(0) + '%'); b.style.setProperty('--d', (-(k % 7) * .17).toFixed(2) + 's'); });
+  // Music page: choose a style; pause/resume the visual demo
+  const COVERS = { rap: ['cover-rap', 'g.rap'], romantic: ['cover-romantic', 'g.rom'], emotional: ['cover-emotional', 'g.emo'], occasion: ['cover-occasion', 'g.occ'], custom: ['cover-custom', 'g.any'] };
+  $$('.genre').forEach(g => g.addEventListener('click', () => {
+    $$('.genre').forEach(x => { x.classList.toggle('on', x === g); x.setAttribute('aria-pressed', x === g); });
+    const [img, key] = COVERS[g.dataset.g];
+    $('#mp-cover').src = 'assets/media/' + img + '.webp';
+    const tt = $('#mp-title'); tt.dataset.i18n = key; tt.textContent = t(key);
+  }));
+  const mpT = $('#mp-toggle');
+  if (mpT) mpT.addEventListener('click', () => {
+    const pl = $('#mplayer'), paused = pl.classList.toggle('paused');
+    mpT.setAttribute('aria-pressed', !paused); mpT.querySelector('use').setAttribute('href', paused ? '#i-play' : '#i-pause');
+  });
+  if (RM && $('#mplayer')) { $('#mplayer').classList.add('paused'); mpT.setAttribute('aria-pressed', 'false'); mpT.querySelector('use').setAttribute('href', '#i-play'); }
+
   function relang() {
     splitWords(); renderMenu(); renderGift(); renderQr(); renderStats();
     if (current) document.title = t(TITLES[current]);
@@ -326,4 +417,5 @@
   route();
   relang();
   onScroll();
+  parallax();
 })();
