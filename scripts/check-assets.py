@@ -2,7 +2,7 @@
 """Run from the project root before pushing: lists every local file referenced by index.html/config.js and fails if one is missing (Vercel is case-sensitive)."""
 import re,os,sys
 refs=set()
-for f in ['index.html','config.js','assets/logo-data.js']:
+for f in ['index.html','config.js','assets/css/legacy.css','assets/js/legacy.js']:
     if os.path.exists(f):
         t=open(f,encoding='utf-8').read()
         refs|=set(re.findall(r"""["'\(]((?:assets/|favicon)[\w./-]+\.(?:svg|png|jpe?g|webp|gif|ico|js))""",t))
