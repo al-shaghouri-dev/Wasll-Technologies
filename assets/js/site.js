@@ -196,15 +196,15 @@
 
   // ---------- Menu demo ----------
   const DISHES = [
-    ['Starters', 'Lentil Soup', 'شوربة عدس', 12, ['#f3c27a', '#b46a28', '#3a220c']],
-    ['Starters', 'Fattoush', 'فتوش', 14, ['#d7e3a7', '#5d7a2a', '#1b250c']],
-    ['Mains', 'Grilled Chicken Plate', 'طبق دجاج مشوي', 32, ['#f1d390', '#a6672a', '#3a220c']],
-    ['Mains', 'Beef Kebab', 'كباب لحم', 38, ['#f3c6a0', '#b0552a', '#3a160c']],
-    ['Mains', 'Veggie Rice Bowl', 'طبق أرز بالخضار', 26, ['#f4e2a8', '#9c8a3a', '#2a250c']],
-    ['Desserts', 'Date Pudding', 'بودينغ التمر', 16, ['#d9a77a', '#7a4422', '#2a140a']],
-    ['Desserts', 'Kunafa Bite', 'لقمة كنافة', 18, ['#f7c96a', '#c5761e', '#40200a']],
-    ['Drinks', 'Mint Lemonade', 'ليموناضة بالنعناع', 10, ['#e7f2b2', '#79a53a', '#1f2a0c']],
-    ['Drinks', 'Arabic Coffee', 'قهوة عربية', 8, ['#d8b98a', '#6a4a22', '#1f140a']]
+    ['Starters', 'Lentil Soup', 'شوربة عدس', 12, 'lentilSoup'],
+    ['Starters', 'Fattoush', 'فتوش', 14, 'fattoush'],
+    ['Mains', 'Grilled Chicken Plate', 'طبق دجاج مشوي', 32, 'grilledChicken'],
+    ['Mains', 'Beef Kebab', 'كباب لحم', 38, 'beefKebab'],
+    ['Mains', 'Veggie Rice Bowl', 'طبق أرز بالخضار', 26, 'veggieRice'],
+    ['Desserts', 'Date Pudding', 'بودينغ التمر', 16, 'datePudding'],
+    ['Desserts', 'Kunafa Bite', 'لقمة كنافة', 18, 'kunafa'],
+    ['Drinks', 'Mint Lemonade', 'ليموناضة بالنعناع', 10, 'mintLemonade'],
+    ['Drinks', 'Arabic Coffee', 'قهوة عربية', 8, 'arabicCoffee']
   ];
   let mcat = 'All';
   const mq = $('#mq'), mc = $('#mc'), ml = $('#ml'), me = $('#me');
@@ -224,8 +224,8 @@
     ml.innerHTML = '';
     list.forEach(d => {
       const el = document.createElement('div'); el.className = 'dish-c'; el.setAttribute('role', 'listitem');
-      el.innerHTML = '<u aria-hidden="true"></u><div><small></small><b></b><em><span></span></em></div>';
-      const u = el.querySelector('u'); u.style.setProperty('--c1', d[4][0]); u.style.setProperty('--c2', d[4][1]); u.style.setProperty('--c3', d[4][2]);
+      el.innerHTML = '<img alt="" width="480" height="480" loading="lazy"><div><small></small><b></b><em><span></span></em></div>';
+      el.querySelector('img').src = 'assets/media/dish-' + d[4] + '.webp';
       el.querySelector('small').textContent = t('mp.c.' + d[0]);
       el.querySelector('b').textContent = lang === 'ar' ? d[2] : d[1];
       el.querySelector('em').prepend(String(d[3]));
