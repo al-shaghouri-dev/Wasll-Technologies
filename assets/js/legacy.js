@@ -34,7 +34,7 @@ function gift(){$('#gp').className='gift th-'+theme;$('#gpn').textContent=$('#gn
 $$('#gt .chip').forEach(b=>b.onclick=()=>{theme=b.dataset.t;gift()});$('#gn').oninput=$('#gm').oninput=gift;
 $('#gr').onclick=()=>{$('#gn').value='';$('#gm').value='';theme='burgundy';gift()};
 // Contact channels
-const wa=C.whatsapp?`https://wa.me/${C.whatsapp.replace(/\D/g,'')}`:'';
+const waN=C.whatsapp||(C.whatsappNumbers||{}).CA||"";const wa=waN?`https://wa.me/${waN.replace(/\D/g,'')}`:'';
 function renderChan(){const s=[];if(wa)s.push(`<a href="${wa}" rel="noopener">WhatsApp</a>`);if(C.email)s.push(`<a href="mailto:${C.email}">${C.email}</a>`);
  Object.entries(C.social).forEach(([k,v])=>v&&s.push(`<a href="${v}" rel="noopener" target="_blank">${k}</a>`));
  const t=s.length?s.join(' · '):(lang==='ar'?'قنوات التواصل غير مضبوطة بعد (ملف config.js).':'Contact channels not configured yet (edit config.js).');
@@ -148,7 +148,7 @@ const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 function go(id){const run=()=>{const el=id==='top'?null:document.getElementById(id);if(!el)return scrollTo({top:0,behavior:RM?'auto':'smooth'});el.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'})};
  if((location.hash||'#/')!=='#/'){location.hash='#/';setTimeout(run,120)}else run()}
 document.addEventListener('click',e=>{const a=e.target.closest('a[data-go]');if(a){e.preventDefault();go(a.dataset.go);$('#links').classList.remove('open');$('#burger').setAttribute('aria-expanded','false')}});
-renderChan=function(){const w=C.whatsapp.replace(/\D/g,''),base=w?'https://wa.me/'+w:'';
+renderChan=function(){const w=waN.replace(/\D/g,''),base=w?'https://wa.me/'+w:'';
  $$('[data-wa]').forEach(a=>{const m=lang==='ar'?(a.dataset.msg||''):'Hello WASL Technologies, I would like to ask about your services.';a.href=base+(m?'?text='+encodeURIComponent(m):'');a.target='_blank';a.rel='noopener noreferrer'});
  $$('[data-mail]').forEach(a=>{a.href='mailto:'+C.email;if(!a.hasAttribute('data-keep'))a.textContent=C.email});
  const so=Object.entries(C.social||{}).filter(([k,v])=>v).map(([k,v])=>`<a href="${v}" target="_blank" rel="noopener noreferrer">${k}</a>`).join('');if($('#soc'))$('#soc').innerHTML=so};

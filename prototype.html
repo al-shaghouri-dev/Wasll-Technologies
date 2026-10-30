@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WASL Technologies — Digital Experiences That Connect</title>
+<meta name="description" content="WASL Technologies builds websites, digital restaurant menus with QR, and personalized digital gifts, in Arabic and English.">
+<meta name="robots" content="noindex, nofollow"><!-- design prototype: not for indexing -->
+<meta name="theme-color" content="#07070a">
+<link rel="icon" href="assets/favicon.png" type="image/png"><link rel="shortcut icon" href="favicon.ico"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<script src="config.js"></script>
+<script>
+// Choose the language before first paint: ?lang= → saved manual choice → browser languages → config fallback.
+(function () {
+  var d = document.documentElement, l = null;
+  try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'ar' || q === 'en') l = q; } catch (e) {}
+  if (!l) { try { var s = localStorage.getItem('wasl.lang'); if (s === 'ar' || s === 'en') l = s; } catch (e) {} }
+  if (!l) {
+    var ls = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || navigator.userLanguage || ''];
+    for (var i = 0; i < ls.length; i++) { var c = String(ls[i] || '').toLowerCase(); if (c.indexOf('ar') === 0) { l = 'ar'; break; } if (c.indexOf('en') === 0) { l = 'en'; break; } }
+  }
+  if (!l) l = (window.WASL && window.WASL.defaultLang === 'ar') ? 'ar' : 'en';
+  d.lang = l; d.dir = l === 'ar' ? 'rtl' : 'ltr'; d.className += ' js';
+})();
+</script>
+<link rel="stylesheet" href="assets/css/wasl.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01"/></g></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2M20 14v6h-4M14 18v2"/></g></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v7.5h14v-7.5M12 8.5V20M12 8.5S10.5 4 8 4.5 7 8.5 12 8.5zm0 0s1.5-4.5 4-4 1 4-4 4z"/></g></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z" fill="currentColor"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 32 32"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.5.7 4.8 2 6.8L3.2 29l6.8-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm0 23.1c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4 1.2 1.3-3.9-.3-.4a10.4 10.4 0 01-1.6-5.6C5.6 9.9 10.3 5.3 16 5.3s10.4 4.6 10.4 10.3S21.7 26.1 16 26.1zm5.7-7.7c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.5 8.5 0 01-4.2-3.7c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.5 1.1 2.9 1.2 3.1 2.1 3.2 5.1 4.5c1.9.8 2.6.9 3.6.7.6-.1 1.8-.7 2-1.4s.3-1.3.2-1.4-.3-.2-.6-.3z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></g></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></g></symbol>
+  <symbol id="i-device" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2.5" y="5" width="13" height="10" rx="1.5"/><rect x="17" y="8" width="4.5" height="11" rx="1.2"/><path d="M6 19h6"/></g></symbol>
+  <symbol id="i-detail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M8.5 11h5M11 8.5v5"/></g></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4z"/><path d="M8 9.5h8M8 12h5" stroke-linecap="round"/></g></symbol>
+</svg>
+
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<!-- Navigation -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="WASL Technologies"><img src="assets/logo-mark.png" width="360" height="203" alt=""><span class="wm"><b>WASL</b><small>TECHNOLOGIES</small></span></a>
+    <nav class="nav-links" aria-label="Main">
+      <div class="nav-dd">
+        <button class="nav-l" id="svc-btn" aria-expanded="false" aria-controls="svc-panel"><span data-i18n="nav.services">Services</span><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></button>
+        <div class="svc-panel" id="svc-panel">
+          <a class="svc-i" href="index.html#/web"><span class="ic"><svg aria-hidden="true"><use href="#i-web"/></svg></span><span><b data-i18n="svc.web">Website Development</b><span data-i18n="svc.web.d">Professional, responsive websites for companies, personal brands and projects.</span></span></a>
+          <a class="svc-i" href="index.html#/menus"><span class="ic"><svg aria-hidden="true"><use href="#i-qr"/></svg></span><span><b data-i18n="svc.menus">Digital Menus &amp; QR</b><span data-i18n="svc.menus.d">Modern restaurant menus linked straight to your customers through a QR code.</span></span></a>
+          <a class="svc-i" href="index.html#/gifts"><span class="ic"><svg aria-hidden="true"><use href="#i-gift"/></svg></span><span><b data-i18n="svc.gifts">Personalized Digital Gifts</b><span data-i18n="svc.gifts.d">Unique designs with photos, personal messages and custom songs.</span></span></a>
+          <a class="svc-i" href="#services"><span class="ic"><svg aria-hidden="true"><use href="#i-spark"/></svg></span><span><b data-i18n="svc.exp">Digital Experiences</b><span data-i18n="svc.exp.d">Custom solutions that fit your needs and turn your ideas into digital reality.</span></span></a>
+        </div>
+      </div>
+      <a class="nav-l" href="#work" data-i18n="nav.work">Work</a>
+      <a class="nav-l" href="#about" data-i18n="nav.about">About</a>
+      <a class="nav-l" href="#faq" data-i18n="nav.faq">FAQ</a>
+      <a class="nav-l" href="#contact" data-i18n="nav.contact">Contact</a>
+    </nav>
+    <div class="nav-act">
+      <button class="lang" type="button" data-lang-toggle data-i18n-attr="aria-label:nav.lang" aria-label="Switch language"><span data-l="en">EN</span><span data-l="ar">ع</span></button>
+      <a class="btn btn-gold btn-sm" href="#contact" data-i18n="nav.cta">Start a project</a>
+      <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Menu"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mnav" id="mnav" aria-hidden="true">
+  <nav aria-label="Mobile">
+    <a class="m-l" href="#top" data-i18n="nav.home">Home</a>
+    <a class="m-l" href="#services" data-i18n="nav.services">Services</a>
+    <div class="m-svc">
+      <a href="index.html#/web" data-i18n="svc.web">Website Development</a>
+      <a href="index.html#/menus" data-i18n="svc.menus">Digital Menus &amp; QR</a>
+      <a href="index.html#/gifts" data-i18n="svc.gifts">Personalized Digital Gifts</a>
+      <a href="#services" data-i18n="svc.exp">Digital Experiences</a>
+    </div>
+    <a class="m-l" href="#work" data-i18n="nav.work">Work</a>
+    <a class="m-l" href="#about" data-i18n="nav.about">About</a>
+    <a class="m-l" href="#faq" data-i18n="nav.faq">FAQ</a>
+    <a class="m-l" href="#contact" data-i18n="nav.contact">Contact</a>
+  </nav>
+  <div class="m-foot">
+    <button class="lang" type="button" data-lang-toggle data-i18n-attr="aria-label:nav.lang" aria-label="Switch language"><span data-l="en">EN</span><span data-l="ar">ع</span></button>
+    <a class="btn btn-gold" href="#contact" data-i18n="nav.cta">Start a project</a>
+  </div>
+</div>
+
+<main id="main">
+
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"><div class="gridl"></div><div class="glow g1"></div><div class="glow g2"></div><div class="horizon"></div></div>
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="pill-eb intro" style="--i:0"><span class="dot"></span><span data-i18n="hero.eyebrow">Websites · Digital menus · Digital gifts</span></p>
+      <h1 class="h-hero"><span class="ln intro" style="--i:1" data-i18n="hero.t1">We turn your ideas into</span><span class="ln gold intro" style="--i:2" data-i18n="hero.t2">exceptional digital experiences</span></h1>
+      <p class="lead intro" style="--i:3" data-i18n="hero.lead">At WASL Technologies we combine creativity and technology to build websites, digital solutions and custom experiences that carry your ideas to the world.</p>
+      <div class="cta-row intro" style="--i:4">
+        <a class="btn btn-gold btn-lg magnetic" href="#contact"><span data-i18n="hero.cta1">Start your project</span><svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ghost btn-lg" href="#services" data-i18n="hero.cta2">Explore our services</a>
+      </div>
+      <ul class="proof intro" style="--i:5">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="hero.p1">Bilingual, Arabic &amp; English</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="hero.p2">Built for every screen</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="hero.p3">Clear scope &amp; pricing</span></li>
+      </ul>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <svg class="links layer" style="--d:4px" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#f6e2b0" stop-opacity="0"/><stop offset=".5" stop-color="#f6e2b0"/><stop offset="1" stop-color="#dcb46e" stop-opacity="0"/></linearGradient></defs>
+        <path class="base" d="M50 50 C 42 40, 36 32, 30 26"/><path class="flow" d="M50 50 C 42 40, 36 32, 30 26" pathLength="400"/>
+        <path class="base" d="M50 50 C 62 46, 72 40, 84 34"/><path class="flow b" d="M50 50 C 62 46, 72 40, 84 34" pathLength="400"/>
+        <path class="base" d="M50 50 C 42 62, 34 70, 26 76"/><path class="flow c" d="M50 50 C 42 62, 34 70, 26 76" pathLength="400"/>
+        <path class="base" d="M50 50 C 60 60, 68 68, 75 74"/><path class="flow" d="M50 50 C 60 60, 68 68, 75 74" pathLength="400"/>
+      </svg>
+      <div class="layer orb pop" style="--d:-8px;--i:0"><img src="assets/logo-mark.png" width="360" height="203" alt=""></div>
+
+      <div class="layer pop" style="--d:18px;--i:1;position:absolute;inset:0">
+        <div class="glass c-site float-a" style="position:absolute">
+          <span class="tagc"><i></i><span data-i18n="art.site">Website</span></span>
+          <div class="bar"><i></i><i></i><i></i><span class="url" data-i18n="art.brand">yourbrand.com</span></div>
+          <div class="scr"><span class="h" data-i18n="art.h">Ideas, designed.</span><i class="s"></i><i class="s b"></i><i class="cta"></i><div class="tiles"><i></i><i></i><i></i></div></div>
+        </div>
+      </div>
+
+      <div class="layer pop" style="--d:26px;--i:2;position:absolute;inset:0">
+        <div class="glass c-menu float-b" style="position:absolute">
+          <span class="tagc"><i></i><span data-i18n="art.menu">QR menu</span></span>
+          <div class="ph"><div class="notch"></div><span class="t" data-i18n="art.bistro">Sample Bistro</span><div class="dish"></div>
+            <div class="row"><span data-i18n="art.d1">Fattoush</span><em>14</em></div><div class="row"><span data-i18n="art.d2">Kebab</span><em>38</em></div><div class="row"><span data-i18n="art.d3">Lemonade</span><em>10</em></div>
+            <span class="open" data-i18n="art.open">Open menu</span></div>
+        </div>
+      </div>
+
+      <div class="layer pop" style="--d:34px;--i:3;position:absolute;inset:0">
+        <div class="qr float-c" style="position:absolute">
+          <svg viewBox="0 0 21 21" shape-rendering="crispEdges"><path fill="#18140c" d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM14 0h7v7h-7zM15 1v5h5V1zM16 2h3v3h-3zM0 14h7v7H0zM1 15v5h5v-5zM2 16h3v3H2zM8 0h2v2H8zM11 1h2v3h-2zM8 3h2v2H8zM9 6h3v2H9zM8 9h2v3H8zM11 9h3v2h-3zM15 8h2v2h-2zM18 9h3v2h-3zM13 12h2v3h-2zM16 12h2v2h-2zM19 13h2v3h-2zM9 13h3v2H9zM8 16h2v3H8zM11 17h3v2h-3zM15 16h3v2h-3zM17 19h4v2h-4zM12 20h2v1h-2zM3 9h3v2H3zM0 11h2v2H0zM5 12h2v1H5z"/></svg>
+          <span data-i18n="art.scan">Scan me</span>
+        </div>
+      </div>
+
+      <div class="layer pop" style="--d:12px;--i:4;position:absolute;inset:0">
+        <div class="glass c-gift float-c" style="position:absolute">
+          <span class="tagc"><i></i><span data-i18n="art.gift">Digital gift</span></span>
+          <svg class="heart"><use href="#i-heart"/></svg>
+          <div class="f" data-i18n="art.for">For Layla</div><div class="m" data-i18n="art.msg">Every moment with you…</div>
+          <div class="track"><span class="play"></span><span class="prog"><i></i></span></div>
+        </div>
+      </div>
+      <span class="spark layer" style="--d:40px;left:30%;top:26%"></span><span class="spark layer" style="--d:40px;left:84%;top:34%"></span><span class="spark layer" style="--d:40px;left:26%;top:76%"></span>
+    </div>
+  </div>
+</section>
+
+<!-- Statement -->
+<section class="stmt" aria-labelledby="stmt-h">
+  <div class="wrap">
+    <h2 id="stmt-h" class="rv"><span class="a" data-i18n="stmt.a">WASL means</span> <span class="gold-text" data-i18n="stmt.b">connection.</span></h2>
+    <p id="stmt-p" data-i18n="stmt.c">We use technology and creativity to connect businesses with their customers, and people with their memories.</p>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="sec" id="services" aria-labelledby="svc-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow rv" data-i18n="svcs.eb">Services</p>
+      <h2 class="h-sec rv" style="--i:1" id="svc-h" data-i18n="svcs.h">Digital solutions, crafted with care.</h2>
+      <p class="lead rv" style="--i:2" data-i18n="svcs.lead">Innovative digital solutions that help you build a strong presence in the digital world.</p>
+    </div>
+    <div class="bento">
+      <article class="card svc span2 rv">
+        <div class="body">
+          <span class="num">01</span>
+          <h3 data-i18n="svc.web">Website Development</h3>
+          <p data-i18n="svc.web.d">Professional, responsive websites for companies, personal brands and projects.</p>
+          <ul><li data-i18n="svcs.web.b1">Business &amp; corporate sites</li><li data-i18n="svcs.web.b2">Portfolios &amp; landing pages</li><li data-i18n="svcs.web.b3">Redesigns &amp; maintenance</li></ul>
+          <div class="acts"><a class="link-arrow" href="index.html#/web"><span data-i18n="svcs.more">Service details</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </div>
+        <div class="art"><img src="assets/images/service-web.svg" width="600" height="300" alt="" loading="lazy"></div>
+      </article>
+      <article class="card svc rv" style="--i:1">
+        <div class="body">
+          <span class="num">02</span>
+          <h3 data-i18n="svc.menus">Digital Menus &amp; QR</h3>
+          <p data-i18n="svc.menus.d">Modern restaurant menus linked straight to your customers through a QR code.</p>
+          <ul><li data-i18n="svcs.menus.b1">Categories, photos &amp; prices</li><li data-i18n="svcs.menus.b2">Print-ready QR designs</li></ul>
+          <div class="acts"><a class="link-arrow" href="index.html#/menus"><span data-i18n="svcs.demo">Try the live demo</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </div>
+        <div class="art"><img src="assets/images/service-menu.svg" width="600" height="300" alt="" loading="lazy"></div>
+      </article>
+      <article class="card svc rv">
+        <div class="body">
+          <span class="num">03</span>
+          <h3 data-i18n="svc.gifts">Personalized Digital Gifts</h3>
+          <p data-i18n="svc.gifts.d">Unique designs with photos, personal messages and custom songs.</p>
+          <ul><li data-i18n="svcs.gifts.b1">Love pages &amp; animated letters</li><li data-i18n="svcs.gifts.b2">Custom song requests</li></ul>
+          <div class="acts"><a class="link-arrow" href="index.html#/gifts"><span data-i18n="svcs.demo">Try the live demo</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </div>
+        <div class="art"><img src="assets/images/service-gift.svg" width="600" height="300" alt="" loading="lazy"></div>
+      </article>
+      <article class="card svc span2 rv" style="--i:1">
+        <div class="body">
+          <span class="num">04</span>
+          <h3 data-i18n="svc.exp">Digital Experiences</h3>
+          <p data-i18n="svc.exp.d">Custom solutions that fit your needs and turn your ideas into digital reality.</p>
+          <ul><li data-i18n="svcs.exp.b1">Tailored to your idea</li><li data-i18n="svcs.exp.b2">Interactive concepts</li></ul>
+          <div class="acts"><a class="link-arrow" href="#contact"><span data-i18n="svcs.more">Service details</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </div>
+        <div class="art"><img src="assets/images/service-experience.svg" width="600" height="300" alt="" loading="lazy"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Process -->
+<section class="sec" aria-labelledby="proc-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow rv" data-i18n="proc.eb">How we work</p>
+      <h2 class="h-sec rv" style="--i:1" id="proc-h" data-i18n="proc.h">Four clear steps</h2>
+    </div>
+    <div class="proc">
+      <span class="rail" aria-hidden="true"><i></i></span>
+      <div class="step"><span class="n">01</span><h3 data-i18n="proc.1">Understand your idea</h3><p data-i18n="proc.1d">We listen first: your goals, your audience and the materials you have.</p></div>
+      <div class="step"><span class="n">02</span><h3 data-i18n="proc.2">Plan the right solution</h3><p data-i18n="proc.2d">A clear scope, timeline and quote before any work starts.</p></div>
+      <div class="step"><span class="n">03</span><h3 data-i18n="proc.3">Design and develop</h3><p data-i18n="proc.3d">Careful design and clean code, shared with you as we go.</p></div>
+      <div class="step"><span class="n">04</span><h3 data-i18n="proc.4">Review and deliver</h3><p data-i18n="proc.4d">We test on real devices, refine the details, then launch.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Work -->
+<section class="sec" id="work" aria-labelledby="work-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow rv" data-i18n="work.eb">Portfolio</p>
+      <h2 class="h-sec rv" style="--i:1" id="work-h" data-i18n="work.h">Our work</h2>
+      <p class="lead rv" style="--i:2" data-i18n="work.lead">Demo and concept pieces that show our creativity and the way we build digital solutions. They are not paid client projects.</p>
+    </div>
+    <div class="work-grid">
+      <a class="card tile rv" href="index.html#/web"><div class="vis"><span class="tg" data-i18n="tag.concept">Concept</span><div class="v-web"><i></i><i></i><i></i><i></i></div></div><b data-i18n="work.1">Websites</b><small data-i18n="work.1d">Professional website design</small></a>
+      <a class="card tile rv" style="--i:1" href="index.html#/menus"><div class="vis"><span class="tg" data-i18n="tag.demo">Demo</span><div class="v-menu"><i></i><i></i><i></i><i></i></div></div><b data-i18n="work.2">Digital menus</b><small data-i18n="work.2d">Interactive menus with QR</small></a>
+      <a class="card tile rv" style="--i:2" href="index.html#/gifts"><div class="vis"><span class="tg" data-i18n="tag.demo">Demo</span><div class="v-gift"><svg><use href="#i-heart"/></svg></div></div><b data-i18n="work.3">Custom gifts</b><small data-i18n="work.3d">Unique, personal digital gifts</small></a>
+      <a class="card tile rv" style="--i:3" href="#contact"><div class="vis"><span class="tg" data-i18n="tag.concept">Concept</span><div class="v-exp"><span></span><span></span><span></span></div></div><b data-i18n="work.4">Creative solutions</b><small data-i18n="work.4d">Custom digital experience concepts</small></a>
+    </div>
+    <div class="work-cta rv"><a class="btn btn-ghost" href="index.html#/menus"><span data-i18n="work.cta">Try the live demos</span><svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Why WASL -->
+<section class="sec" aria-labelledby="why-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow rv" data-i18n="why.eb">Why WASL</p>
+      <h2 class="h-sec rv" style="--i:1" id="why-h" data-i18n="why.h">Practical, careful, clear.</h2>
+    </div>
+    <div class="why">
+      <div class="rv"><svg aria-hidden="true"><use href="#i-layers"/></svg><b data-i18n="why.1">Tailored solutions</b><p data-i18n="why.1d">Each project starts from your idea, not a fixed template.</p></div>
+      <div class="rv" style="--i:1"><svg aria-hidden="true"><use href="#i-device"/></svg><b data-i18n="why.2">Responsive design</b><p data-i18n="why.2d">Built to work well on phones, tablets and desktops.</p></div>
+      <div class="rv" style="--i:2"><svg aria-hidden="true"><use href="#i-detail"/></svg><b data-i18n="why.3">Attention to detail</b><p data-i18n="why.3d">Typography, spacing and small interactions get real care.</p></div>
+      <div class="rv" style="--i:3"><svg aria-hidden="true"><use href="#i-chat"/></svg><b data-i18n="why.4">Clear communication</b><p data-i18n="why.4d">You know what is included, what it costs and what happens next.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="sec" id="about" aria-labelledby="about-h" style="padding-top:0">
+  <div class="wrap about">
+    <div class="txt">
+      <p class="eyebrow rv" data-i18n="about.eb">About us</p>
+      <h2 class="h-sec rv" style="--i:1" id="about-h" data-i18n="about.h">Two founders. One idea: connection.</h2>
+      <p class="lead rv" style="--i:2" data-i18n="about.p">WASL Technologies is a technology company founded by two partners, Ahmed and Bashar. The name echoes the Arabic word for “connection”: we use technology and creativity to connect businesses with their customers and people with their memories.</p>
+      <p class="slogan rv" style="--i:3"><span data-i18n="about.s1">Technology,</span><span data-i18n="about.s2">creativity,</span><span data-i18n="about.s3">people.</span></p>
+    </div>
+    <div class="card founders rv" style="--i:2">
+      <h3 data-i18n="about.f">The founders</h3>
+      <div class="fd"><span class="av" aria-hidden="true">A</span><div><b data-i18n="about.ahmed">Ahmed</b><small data-i18n="about.role">Co-founder</small></div><span class="link" aria-hidden="true"></span></div>
+      <div class="fd"><span class="av" aria-hidden="true">B</span><div><b data-i18n="about.bashar">Bashar</b><small data-i18n="about.role">Co-founder</small></div><span class="link" aria-hidden="true"></span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="sec" id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq">
+    <div class="sec-head">
+      <p class="eyebrow rv" data-i18n="faq.eb">FAQ</p>
+      <h2 class="h-sec rv" style="--i:1" id="faq-h" data-i18n="faq.h">Frequently asked questions</h2>
+    </div>
+    <div id="faq-list" class="rv" style="--i:2"></div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="sec" id="contact" aria-labelledby="ct-h" style="padding-top:0">
+  <div class="wrap">
+    <div class="contact rv">
+      <div class="info">
+        <p class="eyebrow" data-i18n="ct.eb">Contact</p>
+        <h2 class="h-sec" id="ct-h" data-i18n="ct.h">Let’s build something together.</h2>
+        <p class="muted" data-i18n="ct.lead">We’re here to help. Send your project details and we’ll get back to you.</p>
+        <div class="chan">
+          <div class="hd"><span class="ic wa"><svg aria-hidden="true"><use href="#i-wa"/></svg></span><div><b data-i18n="ct.wa">WhatsApp</b><small data-i18n="ct.wa.d">The fastest way to reach us.</small></div></div>
+          <div class="wa-list" data-wa-list></div>
+        </div>
+        <div class="chan">
+          <div class="hd"><span class="ic ml"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><div><b data-i18n="ct.mail">Email</b><a class="mail" data-mail data-mail-text href="#">technologieswasl@gmail.com</a></div></div>
+        </div>
+        <p class="note" data-i18n="ct.note">We reply as soon as we can. Pricing and timelines depend on project scope.</p>
+      </div>
+      <form class="form" id="project-form" novalidate>
+        <div class="fld"><input id="f-name" name="name" autocomplete="name" required placeholder=" "><label for="f-name"><span data-i18n="f.name">Full name</span> *</label></div>
+        <div class="fld"><input id="f-email" name="email" type="email" autocomplete="email" required placeholder=" " dir="ltr"><label for="f-email"><span data-i18n="f.email">Email</span> *</label></div>
+        <div class="fld"><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder=" " dir="ltr"><label for="f-phone" data-i18n="f.phone">WhatsApp or phone (optional)</label></div>
+        <div class="fld"><select id="f-service" name="service" required>
+          <option value="Website Development" data-i18n="f.o1">Website Development</option>
+          <option value="Digital Menu & QR" data-i18n="f.o2">Digital Menu &amp; QR</option>
+          <option value="Personalized Digital Gift" data-i18n="f.o3">Personalized Digital Gift</option>
+          <option value="Digital Experiences" data-i18n="f.o4">Digital Experiences</option>
+          <option value="Other" data-i18n="f.o5">Other</option>
+        </select><label for="f-service"><span data-i18n="f.service">Service of interest</span> *</label></div>
+        <div class="fld full"><textarea id="f-msg" name="message" required placeholder=" "></textarea><label for="f-msg"><span data-i18n="f.msg">Project details</span> *</label></div>
+        <input class="hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="send"><button class="btn btn-gold btn-lg" type="submit" data-i18n="f.send">Send request</button></div>
+        <div class="msg fld full" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Closing -->
+<section class="closing" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div class="line" aria-hidden="true"></div>
+    <h2 class="rv" id="cta-h" data-i18n="cta.h">Have an idea? Let’s connect it to the world.</h2>
+    <div class="rv" style="--i:1;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-gold btn-lg magnetic" href="#contact"><span data-i18n="cta.b">Start your project</span><svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-wa btn-lg" href="#whatsapp" data-wa><svg aria-hidden="true" style="width:20px;height:20px"><use href="#i-wa"/></svg><span data-i18n="ct.wa.btn">Message us</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- Footer -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img class="logo" src="assets/logo-full.png" width="720" height="626" alt="WASL Technologies" loading="lazy">
+        <p class="tag" data-i18n="ft.tag">Connecting People, Businesses and Ideas</p>
+      </div>
+      <div>
+        <h4 data-i18n="ft.services">Services</h4>
+        <ul>
+          <li><a href="index.html#/web" data-i18n="svc.web">Website Development</a></li>
+          <li><a href="index.html#/menus" data-i18n="svc.menus">Digital Menus &amp; QR</a></li>
+          <li><a href="index.html#/gifts" data-i18n="svc.gifts">Personalized Digital Gifts</a></li>
+          <li><a href="#services" data-i18n="svc.exp">Digital Experiences</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="ft.company">Company</h4>
+        <ul>
+          <li><a href="#about" data-i18n="nav.about">About</a></li>
+          <li><a href="#work" data-i18n="nav.work">Work</a></li>
+          <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+          <li><a href="index.html#/privacy" data-i18n="ft.privacy">Privacy Policy</a></li>
+          <li><a href="index.html#/terms" data-i18n="ft.terms">Terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="ft.contact">Contact</h4>
+        <ul id="soc"><li><a data-mail data-mail-text href="#" class="ltr">technologieswasl@gmail.com</a></li></ul>
+        <div class="wa-list" data-wa-list style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span class="ltr">© <span id="yr">2026</span> WASL Technologies. <span data-i18n="ft.rights">All rights reserved.</span></span>
+      <span class="motto" data-i18n="ft.motto">Building Digital Tomorrow</span>
+      <button class="lang" type="button" data-lang-toggle data-i18n-attr="aria-label:nav.lang" aria-label="Switch language"><span data-l="en">EN</span><span data-l="ar">ع</span></button>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" type="button" data-i18n-attr="aria-label:top" aria-label="Back to top"><svg aria-hidden="true" style="transform:rotate(-90deg)"><use href="#i-arrow"/></svg></button>
+<a class="wa-fab" href="#whatsapp" data-wa data-i18n-attr="aria-label:wa.fab" aria-label="Contact us on WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
+
+<div class="sheet" id="wa-sheet" role="dialog" aria-modal="true" aria-labelledby="wa-title" hidden>
+  <div class="sheet-card">
+    <button class="sheet-x" type="button" data-i18n-attr="aria-label:wa.close" aria-label="Close">×</button>
+    <div class="sheet-ic" aria-hidden="true"><svg><use href="#i-wa"/></svg></div>
+    <h2 id="wa-title" data-i18n="wa.title">Chat with us on WhatsApp</h2>
+    <p data-i18n="wa.sub">Choose the line that suits you.</p>
+    <p class="sheet-loading" data-i18n="wa.loading">Finding the right line for you…</p>
+    <div class="wa-list" data-wa-list></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/contact.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

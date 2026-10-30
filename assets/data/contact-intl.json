@@ -1,0 +1,4 @@
+{
+  "_note": "Static fallback for non-Canadian visitors when api/contact is unreachable (e.g. GitHub Pages). Never requested for visitors detected as Canadian. This file is public.",
+  "whatsapp": { "SY": "963946540671" }
+}
