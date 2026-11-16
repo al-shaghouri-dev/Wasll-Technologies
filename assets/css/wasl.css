@@ -981,3 +981,86 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opa
 .dish-c{grid-template-columns:72px 1fr;padding:12px}
 .dish-c img{width:72px;height:72px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.5));transition:transform .6s var(--ease-out)}
 .dish-c:hover img{transform:rotate(-12deg) scale(1.05)}
+
+/* =====================================================================
+   v5 — Motion layer (assets/js/motion.js + assets/js/hero3d.js)
+   Everything under .m-on exists only when motion.js runs: never with reduced motion.
+   ===================================================================== */
+/* The hero copy waits for motion.js; if it never runs (script blocked), it fades in on its own. */
+.js .hero-copy>.intro,.js .h-hero{animation:m-fallback .6s 1.6s var(--ease-out) both}
+.m-on .hero-copy>.intro,.m-on .h-hero{animation:none}
+@keyframes m-fallback{from{opacity:0}to{opacity:1}}
+
+/* Split hero title: each piece carries its own gradient so it can move independently.
+   Padding + equal negative margin widens the painted area so tight tracking and descenders aren't clipped. */
+.h-hero.ht-split .ln{background:none}
+.h-hero .ht-w{display:inline-block;white-space:nowrap}
+.h-hero .ht-c{display:inline-block;padding:.16em .08em;margin:-.16em -.08em;transform-origin:50% 100%;
+  background:var(--silver-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.h-hero .ln.gold .ht-c{background:var(--gold-text);-webkit-background-clip:text;background-clip:text}
+
+/* Three.js constellation: black canvas screened onto the hero, faded toward the copy side */
+.hero-3d{position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:screen;
+  -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.35),#000 62%);mask-image:linear-gradient(90deg,rgba(0,0,0,.35),#000 62%)}
+[dir=rtl] .hero-3d{-webkit-mask-image:linear-gradient(270deg,rgba(0,0,0,.35),#000 62%);mask-image:linear-gradient(270deg,rgba(0,0,0,.35),#000 62%)}
+.has-3d .hero-bg .gridl{opacity:.2}
+
+/* Hover: a gold edge light that follows the pointer (fine pointers only; JS adds .spot) */
+.genre{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,-240px),rgba(236,213,164,.6),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  transition:opacity .45s var(--ease-out)}
+.spot:hover::after{opacity:1}
+/* A soft sheen crosses the primary button on hover */
+.m-on .btn-primary{overflow:hidden;isolation:isolate}
+.m-on .btn-primary::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);transform:translateX(-110%);transition:transform .9s var(--ease-out)}
+.m-on .btn-primary:hover::before{transform:translateX(110%)}
+[dir=rtl].m-on .btn-primary::before{transform:translateX(110%)}
+[dir=rtl].m-on .btn-primary:hover::before{transform:translateX(-110%)}
+
+/* Page transitions: a dark veil with a gold leading edge slides off the new page (under the nav) */
+.m-veil{position:fixed;inset:0;z-index:45;background:var(--bg);pointer-events:none;opacity:0}
+.m-veil i{position:absolute;inset-block:0;inset-inline-start:0;width:1px;
+  background:linear-gradient(transparent,var(--gold-hi) 30%,var(--gold) 70%,transparent);box-shadow:0 0 18px 2px rgba(214,176,114,.5)}
+@media print{.hero-3d,.m-veil{display:none!important}}
+
+/* =====================================================================
+   v6 — Photo plates: real photography framed behind a service scene (.scene.photo)
+   The copy sits on the darkened inline-start side; the devices float over the lit side.
+   ===================================================================== */
+.scene.photo .scene-in{position:relative;isolation:isolate;padding:clamp(32px,4.4vw,64px) calc(var(--gut) + clamp(12px,1.8vw,26px))}
+/* The panel's single column never grows past the panel, so nothing inside can be clipped */
+.scene.photo .scene-txt{grid-template-columns:minmax(0,1fr)}
+@media (min-width:561px){
+  /* A slightly smaller outlined number leaves the eyebrow room beside it */
+  .scene.photo .s-num{font-size:clamp(3rem,4.4vw,3.8rem);top:18px}
+  .scene.photo .scene-txt .eyebrow{padding-inline-end:clamp(54px,4.4vw,64px)}
+}
+.plate{position:absolute;inset:0 var(--gut);z-index:-1;margin:0;border-radius:var(--r-xl);overflow:hidden;background:var(--bg-2);
+  box-shadow:0 50px 100px -50px rgba(0,0,0,.95)}
+.plate img{width:100%;height:100%;object-fit:cover}
+/* --pd points from the copy's side toward the photo: inline-start normally, inline-end on .rev scenes, mirrored for RTL */
+.plate{--pd:90deg}
+[dir=rtl] .plate,.scene.rev .plate{--pd:270deg}
+[dir=rtl] .scene.rev .plate{--pd:90deg}
+.plate::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(214,176,114,.3);
+  background:linear-gradient(var(--pd),rgba(8,8,10,.93) 0%,rgba(8,8,10,.7) 34%,rgba(8,8,10,.12) 66%,rgba(8,8,10,.3) 100%),linear-gradient(0deg,rgba(8,8,10,.6),transparent 38%)}
+.scene.photo .scene-txt{background:rgba(12,12,15,.42)}
+.scene.photo .tag-demo,.page-hero.photo .tag-demo{z-index:2}
+/* Service page headers sit on the same plates */
+.page-hero.photo .ph-grid{position:relative;isolation:isolate;padding:clamp(32px,4.4vw,60px) calc(var(--gut) + clamp(12px,1.8vw,26px))}
+@media (max-width:1080px){
+  /* Stacked: copy on the dark top of the plate, visuals over the photo below */
+  .plate::after{background:linear-gradient(180deg,rgba(8,8,10,.92) 0%,rgba(8,8,10,.78) 46%,rgba(8,8,10,.1) 78%,rgba(8,8,10,.35) 100%)}
+}
+/* Dish photos are top-down shots: show them round, like plates */
+.float-dish,.dish-fan img,.w-menu .w-vis img,.dish-c img,.mu-item img{aspect-ratio:1;object-fit:cover;border-radius:50%}
+@media (max-width:560px){
+  /* Phones: the photo becomes a full-bleed band, so the content keeps its usual gutters */
+  .scene.photo .scene-in,.page-hero.photo .ph-grid{padding:22px var(--gut) 26px}
+  .laptop .site-nav span{display:none} /* keeps "Book a visit" inside the small laptop screen */
+  .plate{inset:0;border-radius:0}
+  .plate::after{border-radius:0;box-shadow:inset 0 1px 0 rgba(214,176,114,.3),inset 0 -1px 0 rgba(214,176,114,.3)}
+}
