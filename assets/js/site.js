@@ -25,6 +25,7 @@
     document.documentElement.dataset.page = view;
     nav.classList.toggle('solid', view !== 'home');
     if (changed && focus) { const h = $(`[data-view="${view}"] h1`); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); } }
+    document.dispatchEvent(new CustomEvent('wasl:view', { detail: { view, changed } })); // motion.js: transitions and reveals
     return changed;
   }
 
@@ -113,7 +114,9 @@
   }
 
   // ---------- Motion ----------
-  const rv = $$('.rv');
+  // When motion.js is active (GSAP loaded, no reduced motion) it reveals .rv and .rise itself.
+  const GM = !!(window.WASLMotion && window.WASLMotion.on);
+  const rv = GM ? [] : $$('.rv');
   if ('IntersectionObserver' in window && !RM) {
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -5% 0px' });
     rv.forEach(el => io.observe(el));
@@ -324,7 +327,7 @@
     else el.classList.add('in');
     io2.unobserve(el);
   }), { threshold: .2, rootMargin: '0px 0px -8% 0px' }) : null;
-  const revealables = $$('.rise, .connector, [data-envelope], .cap-n[data-count]');
+  const revealables = $$((GM ? '' : '.rise, ') + '.connector, [data-envelope], .cap-n[data-count]');
   if (io2) revealables.forEach(el => io2.observe(el));
   else revealables.forEach(el => { el.classList.add('in'); if (el.matches('[data-envelope]')) el.classList.add('open'); });
   function countUp(el) {
