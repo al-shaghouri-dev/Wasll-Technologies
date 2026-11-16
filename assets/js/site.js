@@ -204,7 +204,7 @@
     ['Mains', 'Grilled Chicken Plate', 'طبق دجاج مشوي', 32, 'grilledChicken'],
     ['Mains', 'Beef Kebab', 'كباب لحم', 38, 'beefKebab'],
     ['Mains', 'Veggie Rice Bowl', 'طبق أرز بالخضار', 26, 'veggieRice'],
-    ['Desserts', 'Date Pudding', 'بودينغ التمر', 16, 'datePudding'],
+    ['Desserts', 'Stuffed Dates', 'تمر محشي', 16, 'datePudding'],
     ['Desserts', 'Kunafa Bite', 'لقمة كنافة', 18, 'kunafa'],
     ['Drinks', 'Mint Lemonade', 'ليموناضة بالنعناع', 10, 'mintLemonade'],
     ['Drinks', 'Arabic Coffee', 'قهوة عربية', 8, 'arabicCoffee']

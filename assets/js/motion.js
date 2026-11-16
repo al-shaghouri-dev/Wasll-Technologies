@@ -81,6 +81,9 @@
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .5, onUpdate: s => h3d && h3d.setScroll(s.progress) } });
     G.to('.stage', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .5 } });
   }
+  // Photo plates: the photo settles from a slight zoom while its section crosses the screen
+  if (!small) $$('.plate img').forEach(img => G.fromTo(img, { scale: 1.14, yPercent: -3 }, { scale: 1.02, yPercent: 3, ease: 'none',
+    scrollTrigger: { trigger: img.closest('.scene, .page-hero'), start: 'top bottom', end: 'bottom top', scrub: .6 } }));
 
   // ---------- Hover: magnetic buttons and a gold edge light that follows the pointer ----------
   if (fine) {
