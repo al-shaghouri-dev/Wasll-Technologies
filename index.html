@@ -123,45 +123,102 @@
 
 <div class="view" data-view="home">
 
-<!-- HERO -->
-<section class="hero" id="top" aria-labelledby="hero-h">
+<!-- HERO: a cinematic scroll story. Without motion it is a still, assembled scene;
+     motion.js pins it and scrubs the story: the phone opens into five service layers, then closes again. -->
+<section class="hero cine" id="top" aria-labelledby="hero-h">
   <div class="hero-bg" aria-hidden="true">
     <div class="aurora a1"></div><div class="aurora a2"></div>
     <div class="gridl"></div>
-    <svg class="ascent" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="asc-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#d6b072" stop-opacity="0"/><stop offset=".55" stop-color="#d6b072" stop-opacity=".55"/><stop offset="1" stop-color="#f3dfae"/></linearGradient>
-        <linearGradient id="asc-f" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#d6b072" stop-opacity="0"/><stop offset="1" stop-color="#d6b072" stop-opacity=".12"/></linearGradient>
-      </defs>
-      <path class="asc-fill" d="M-20 860 C 300 820, 520 760, 760 600 S 1180 260, 1460 120 L1460 900 L-20 900Z" fill="url(#asc-f)"/>
-      <path class="asc-ghost" d="M-20 900 C 340 860, 560 800, 800 660 S 1200 340, 1460 220"/>
-      <path class="asc-ghost" d="M-20 820 C 260 780, 480 720, 700 560 S 1120 200, 1460 40"/>
-      <path class="asc-main" id="asc-path" d="M-20 860 C 300 820, 520 760, 760 600 S 1180 260, 1460 120" pathLength="1"/>
-      <circle class="asc-dot-c" r="5"><animateMotion dur="7s" begin="2.6s" repeatCount="indefinite" path="M-20 860 C 300 820, 520 760, 760 600 S 1180 260, 1460 120"/></circle>
-    </svg>
+    <div class="cx-glow"></div>
   </div>
 
-  <div class="wrap hero-in">
-    <div class="hero-copy">
-      <p class="pill-eb glass intro" style="--i:0"><img src="assets/logo-mark-160.webp" data-fb="logo-mark" width="160" height="90" alt=""><span data-i18n="hero.eyebrow">Connecting Ideas With Technology.</span></p>
-      <h1 class="h-hero" id="hero-h"><span class="ln intro" style="--i:1" data-i18n="hero.t1">From idea</span> <span class="ln gold intro" style="--i:2"><span data-i18n="hero.t2">to impact.</span><svg class="h-arrow" aria-hidden="true" viewBox="0 0 48 48"><path d="M10 38 L38 10 M18 10 H38 V30" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></h1>
+  <div class="wrap hero-copy">
+    <p class="pill-eb glass intro" style="--i:0"><img src="assets/logo-mark-160.webp" data-fb="logo-mark" width="160" height="90" alt=""><span data-i18n="hero.eyebrow">Connecting Ideas With Technology.</span></p>
+    <h1 class="h-hero" id="hero-h"><span class="ln intro" style="--i:1" data-i18n="hero.t1">From idea</span> <span class="ln gold intro" style="--i:2"><span data-i18n="hero.t2">to impact.</span><svg class="h-arrow" aria-hidden="true" viewBox="0 0 48 48"><path d="M10 38 L38 10 M18 10 H38 V30" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></h1>
+    <div class="cx-foot">
       <p class="lead intro" style="--i:3" data-i18n="hero.lead">WASL Technologies is a creative technology studio. We design websites, build mobile and web apps, craft digital restaurant menus and personalized gifts, and write original songs — in Arabic and English.</p>
       <div class="cta-row intro" style="--i:4">
         <a class="btn btn-primary btn-lg magnetic" href="#contact"><span data-i18n="hero.cta1">Start your project</span><svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         <a class="btn btn-glass btn-lg" href="#services"><span data-i18n="hero.cta2">Explore five services</span><svg aria-hidden="true" class="down"><use href="#i-arrow"/></svg></a>
       </div>
     </div>
+  </div>
 
-    <div class="stage" aria-hidden="true">
-      <div class="stage-in">
-        <div class="orbit o1"></div><div class="orbit o2"></div>
-        <div class="core"><div class="core-glass"><img src="assets/logo-mark-360.webp" data-fb="logo-mark" width="360" height="203" alt=""></div></div>
-        <div class="hcard c-web pop" style="--i:0;--z:60px"><div class="chip-h"><i></i><span data-i18n="svc.web.s">Websites</span></div><div class="mini-site"><b></b><i></i><i></i><u></u><div><s></s><s></s><s></s></div></div></div>
-        <div class="hcard c-app pop" style="--i:1;--z:90px"><div class="chip-h"><i></i><span data-i18n="svc.apps.s">Apps</span></div><div class="mini-app"><div class="ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" pathLength="100"/><circle class="v" cx="18" cy="18" r="15" pathLength="100"/></svg><b>72%</b></div><div class="rows"><i></i><i></i><i></i></div></div></div>
-        <div class="hcard c-menu pop" style="--i:2;--z:40px"><div class="chip-h"><i></i><span data-i18n="svc.menus.s">Digital menus</span></div><img src="assets/media/dish-kunafa.webp" width="480" height="480" alt="" loading="lazy"><span class="price">18</span></div>
-        <div class="hcard c-gift pop" style="--i:3;--z:80px"><div class="chip-h"><i></i><span data-i18n="svc.gifts.s">Digital gifts</span></div><img src="assets/media/memory-sunset.webp" width="960" height="720" alt="" loading="lazy"><span class="hrt"><svg><use href="#i-heart"/></svg></span></div>
-        <div class="hcard c-music pop" style="--i:4;--z:70px"><div class="chip-h"><i></i><span data-i18n="svc.music.s">Custom songs</span></div><div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <!-- The phone and its five layers: real site content, built in HTML/CSS 3D -->
+  <div class="stage" aria-hidden="true">
+    <div class="stage-in">
+      <div class="cx-cam">
+        <div class="hcard cx-layer" data-l="web">
+          <div class="cx-scr cx-web"><div class="site m">
+            <div class="site-nav"><b>ATELIER NOOR</b><i class="burger-i"></i></div>
+            <div class="site-hero"><img src="assets/media/scene-interior.webp" width="1600" height="1028" alt="" loading="lazy"><div class="sh-txt"><strong>Spaces that feel like home.</strong><em>Explore</em></div></div>
+            <div class="site-row"><div><i></i><span>Residential</span></div><div><i></i><span>Hospitality</span></div></div>
+          </div></div>
+          <span class="cx-label"><i></i><span data-i18n="svc.web.s">Websites</span></span>
+        </div>
+        <div class="hcard cx-layer" data-l="apps">
+          <div class="cx-scr app">
+            <div class="app-top"><span data-i18n="appv.hi">Good morning</span><b data-i18n="appv.name">Your schedule</b></div>
+            <div class="app-days"><span>12</span><span class="on">13</span><span>14</span><span>15</span><span>16</span></div>
+            <div class="app-screen on">
+              <div class="app-card hl"><small>09:30</small><b data-i18n="appv.c1">Design review</b><span data-i18n="appv.c1d">Studio · 45 min</span></div>
+              <div class="app-card"><small>12:00</small><b data-i18n="appv.c2">Client call</b><span data-i18n="appv.c2d">Online · 30 min</span></div>
+              <div class="app-card"><small>16:15</small><b data-i18n="appv.c3">Launch prep</b><span data-i18n="appv.c3d">Team · 1 h</span></div>
+            </div>
+            <div class="app-tabs"><button type="button" class="on" tabindex="-1"><svg><use href="#i-cal"/></svg></button><button type="button" tabindex="-1"><svg><use href="#i-up"/></svg></button><button type="button" tabindex="-1"><svg><use href="#i-user"/></svg></button></div>
+          </div>
+          <span class="cx-label"><i></i><span data-i18n="svc.apps.s">Apps</span></span>
+        </div>
+        <div class="hcard cx-layer" data-l="menus">
+          <div class="cx-scr menu-ui">
+            <div class="mu-hero"><img src="assets/media/dish-grilledChicken.webp" width="720" height="720" alt="" loading="lazy"><div><small data-i18n="vis.welcome">Welcome to</small><b data-i18n="vis.menu">Sample Bistro</b></div></div>
+            <div class="mu-chips"><span class="on" data-i18n="mp.c.Starters">Starters</span><span data-i18n="mp.c.Mains">Mains</span><span data-i18n="mp.c.Desserts">Desserts</span></div>
+            <div class="mu-list">
+              <div class="mu-item"><img src="assets/media/dish-lentilSoup.webp" width="720" height="720" alt="" loading="lazy"><div><b data-i18n="dish.lentil">Lentil Soup</b></div><em>12</em></div>
+              <div class="mu-item"><img src="assets/media/dish-kunafa.webp" width="720" height="720" alt="" loading="lazy"><div><b data-i18n="dish.kunafa">Kunafa Bite</b></div><em>18</em></div>
+            </div>
+            <div class="cx-qr"><div class="qr-w" data-qr></div><b data-i18n="vis.qr">Scan for the menu</b></div>
+          </div>
+          <span class="cx-label"><i></i><span data-i18n="svc.menus.s">Digital menus</span></span>
+        </div>
+        <div class="hcard cx-layer" data-l="gifts">
+          <div class="cx-scr cx-gift">
+            <img src="assets/media/memory-sunset.webp" width="1440" height="1080" alt="" loading="lazy">
+            <div class="cx-letter"><span>14 · 02</span><b data-i18n="vis.to">For Layla</b><p data-i18n="vis.msg">Every moment with you is my favorite.</p><em data-i18n="gv.sign">— always yours</em></div>
+            <span class="cx-heart"><svg><use href="#i-heart"/></svg></span>
+          </div>
+          <span class="cx-label"><i></i><span data-i18n="svc.gifts.s">Digital gifts</span></span>
+        </div>
+        <div class="hcard cx-layer" data-l="music">
+          <div class="cx-scr cx-music">
+            <img src="assets/media/cover-occasion.webp" width="800" height="800" alt="" loading="lazy">
+            <div class="pl-meta"><b data-i18n="mv.title">Rise — sample track</b><small data-i18n="mv.sub">Visual demo · no audio</small></div>
+            <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="pl-btns"><svg><use href="#i-prev"/></svg><span class="pl-play"><svg><use href="#i-pause"/></svg></span><svg><use href="#i-next"/></svg></div>
+          </div>
+          <span class="cx-label"><i></i><span data-i18n="svc.music.s">Custom songs</span></span>
+        </div>
+
+        <div class="cx-phone">
+          <i class="cx-edge" style="--k:1"></i><i class="cx-edge" style="--k:2"></i><i class="cx-edge" style="--k:3"></i><i class="cx-edge" style="--k:4"></i><i class="cx-edge" style="--k:5"></i>
+          <i class="cx-edge" style="--k:6"></i><i class="cx-edge" style="--k:7"></i><i class="cx-edge" style="--k:8"></i><i class="cx-edge" style="--k:9"></i><i class="cx-edge" style="--k:10"></i>
+          <div class="cx-back"><img src="assets/logo-mark-160.webp" width="160" height="90" alt="" loading="lazy"></div>
+          <div class="cx-front"><div class="cx-screen">
+            <span class="cx-island"></span>
+            <div class="cx-home"><img src="assets/logo-mark-360.webp" width="360" height="203" alt="" loading="lazy"><b>WASL</b><small>TECHNOLOGIES</small></div>
+            <i class="cx-glare"></i>
+          </div></div>
+        </div>
       </div>
+    </div>
+    <ul class="cx-legend"><li data-i18n="svc.web.s">Websites</li><li data-i18n="svc.apps.s">Apps</li><li data-i18n="svc.menus.s">Digital menus</li><li data-i18n="svc.gifts.s">Digital gifts</li><li data-i18n="svc.music.s">Custom songs</li></ul>
+  </div>
+
+  <!-- End of the story: the phone is whole again and the invitation appears -->
+  <div class="cx-end">
+    <div class="cta-row">
+      <a class="btn btn-primary btn-lg" href="#contact"><span data-i18n="hero.cta1">Start your project</span><svg class="arr" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-wa btn-lg" href="#whatsapp" data-wa><svg aria-hidden="true"><use href="#i-wa"/></svg><span data-i18n="ct.wa">WhatsApp</span></a>
     </div>
   </div>
 
@@ -923,6 +980,7 @@
 <script src="assets/js/contact.js"></script>
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
 <script src="assets/js/motion.js"></script>
 <script src="assets/js/site.js"></script>
 </body>
