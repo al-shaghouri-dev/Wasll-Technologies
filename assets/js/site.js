@@ -29,20 +29,32 @@
     return changed;
   }
 
+  // When motion.js runs Lenis (smooth wheel scrolling), programmatic scrolls go through it so the two never fight
+  const lenis = () => window.WASLMotion && window.WASLMotion.lenis;
+  function scrollToY(y, animate) {
+    const L = lenis();
+    if (L) L.scrollTo(y, { immediate: !animate, force: true });
+    else if (animate) scrollTo({ top: y, behavior: smooth });
+    else scrollTo(0, y);
+  }
   function scrollToId(id) {
     const el = document.getElementById(id);
     if (!el) return;
-    requestAnimationFrame(() => el.scrollIntoView({ behavior: smooth, block: 'start' }));
+    requestAnimationFrame(() => {
+      const L = lenis();
+      if (L) L.scrollTo(el, { offset: -(parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0), force: true });
+      else el.scrollIntoView({ behavior: smooth, block: 'start' });
+    });
   }
 
   function route(e) {
     const h = decodeURIComponent(location.hash || '');
-    if (!h || h === '#' || h === '#/') { const ch = show('home', !!e); if (ch || !e) scrollTo(0, 0); else scrollTo({ top: 0, behavior: smooth }); return; }
+    if (!h || h === '#' || h === '#/') { const ch = show('home', !!e); scrollToY(0, !(ch || !e)); return; }
     if (h.startsWith('#/')) {
       const p = h.slice(1).replace(/\/+$/, '') || '/';
-      if (VIEWS[p]) { show(VIEWS[p], !!e); scrollTo(0, 0); return; }
+      if (VIEWS[p]) { show(VIEWS[p], !!e); scrollToY(0); return; }
       if (LEGACY[p]) { show('home'); history.replaceState(null, '', '#' + LEGACY[p]); scrollToId(LEGACY[p]); return; }
-      show('notfound', !!e); scrollTo(0, 0); return;
+      show('notfound', !!e); scrollToY(0); return;
     }
     const id = h.slice(1), el = document.getElementById(id);
     if (!el) { show('home'); return; }
@@ -306,7 +318,7 @@
     items.forEach(i => { const d = document.createElement('div'); d.innerHTML = '<b></b><span class="small"></span>'; d.querySelector('b').textContent = i.value; d.querySelector('span').textContent = window.WASLi18n.lang === 'ar' ? i.ar : i.en; box.append(d); });
   }
   const yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear();
-  if (top) top.addEventListener('click', () => { scrollTo({ top: 0, behavior: smooth }); const s = $('.skip'); if (s) s.focus({ preventScroll: true }); });
+  if (top) top.addEventListener('click', () => { scrollToY(0, true); const s = $('.skip'); if (s) s.focus({ preventScroll: true }); });
 
   // If an image file is ever missing, load the embedded copies on demand.
   function imgFail(img) {

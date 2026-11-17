@@ -987,8 +987,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opa
    Everything under .m-on exists only when motion.js runs: never with reduced motion.
    ===================================================================== */
 /* The hero copy waits for motion.js; if it never runs (script blocked), it fades in on its own. */
-.js .hero-copy>.intro,.js .h-hero{animation:m-fallback .6s 1.6s var(--ease-out) both}
-.m-on .hero-copy>.intro,.m-on .h-hero{animation:none}
+.js .hero-copy .intro:not(.ln),.js .h-hero{animation:m-fallback .6s 1.6s var(--ease-out) both}
+.m-on .hero-copy .intro:not(.ln),.m-on .h-hero{animation:none}
 @keyframes m-fallback{from{opacity:0}to{opacity:1}}
 
 /* Split hero title: each piece carries its own gradient so it can move independently.
@@ -1064,3 +1064,130 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opa
   .plate{inset:0;border-radius:0}
   .plate::after{border-radius:0;box-shadow:inset 0 1px 0 rgba(214,176,114,.3),inset 0 -1px 0 rgba(214,176,114,.3)}
 }
+
+/* =====================================================================
+   v7 — Cinematic hero (.hero.cine): a black-and-gold phone that opens into five service layers.
+   Default (no motion): a still scene, the layers fanned behind the phone.
+   .m-on (motion.js): the hero fills the screen, is pinned, and GSAP scrubs every transform.
+   ===================================================================== */
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-stopped{overflow:clip}
+.lenis.lenis-smooth iframe{pointer-events:none}
+
+.cine{--pw:min(15vw,26svh);--ph:calc(var(--pw) * 2.1);--bz:calc(var(--pw) * .045);--pr:calc(var(--pw) * .17);
+  --sw:calc(var(--pw) - var(--bz) * 2);--sh:calc(var(--ph) - var(--bz) * 2)}
+.hero.cine{display:block;min-height:100svh;padding:calc(var(--nav-h) + 48px) 0 120px;text-align:center}
+.cine .hero-copy{position:relative;z-index:2;display:grid;justify-items:center;gap:24px}
+.cine .h-hero{font-size:clamp(2.8rem,7.4vw,7.6rem);line-height:1}
+html[lang=ar] .cine .h-hero{font-size:clamp(2.6rem,6.6vw,6.6rem);line-height:1.25}
+.cine .h-hero .ln.gold{justify-content:center}
+.cine .cx-foot{display:grid;justify-items:center;gap:24px}
+.cine .lead{margin-inline:auto}
+.cine .cta-row{justify-content:center}
+.cx-glow{position:absolute;left:50%;top:56%;width:min(80vw,960px);aspect-ratio:1;translate:-50% -50%;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(214,176,114,.2),rgba(214,176,114,.06) 45%,transparent 72%)}
+.cine .hero-3d,html[dir=rtl] .cine .hero-3d{-webkit-mask-image:radial-gradient(ellipse 75% 75% at 50% 52%,#000 30%,transparent 85%);mask-image:radial-gradient(ellipse 75% 75% at 50% 52%,#000 30%,transparent 85%)}
+
+/* Stage: a 3D space centred on the phone (the classic .stage/.stage-in rules are reset here) */
+.cine .stage{position:relative;z-index:3;width:100%;max-width:none;height:calc(var(--ph) + 70px);margin:28px 0 0;perspective:1600px;pointer-events:none}
+.cine .stage-in,[dir=rtl] .cine .stage-in{position:absolute;inset:0;aspect-ratio:auto;direction:inherit;transform-style:preserve-3d;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform 1.2s var(--ease-out)}
+.cx-cam{position:absolute;left:50%;top:50%;transform-style:preserve-3d}
+
+/* The phone: front glass, ten edge slices for real thickness, a gold-rimmed back */
+.cx-phone{position:absolute;left:calc(var(--pw) / -2);top:calc(var(--ph) / -2);width:var(--pw);height:var(--ph);transform-style:preserve-3d}
+.cx-edge{position:absolute;inset:0;border-radius:var(--pr);background:#0c0c0f;box-shadow:inset 0 0 0 1.5px rgba(214,176,114,.5);transform:translateZ(calc(var(--k) * -1.7px))}
+.cx-back{position:absolute;inset:0;display:grid;place-items:center;border-radius:var(--pr);background:linear-gradient(160deg,#1c1812,#09090b);
+  box-shadow:inset 0 0 0 1.5px rgba(214,176,114,.6);transform:translateZ(-18px) rotateY(180deg);backface-visibility:hidden}
+.cx-back img{width:34%;opacity:.85}
+.cx-front{position:absolute;inset:0;border-radius:var(--pr);background:#050506;transform:translateZ(1px);
+  box-shadow:inset 0 0 0 1.5px rgba(236,213,164,.85),inset 0 0 0 4px #000,0 60px 120px -40px #000,0 0 140px -30px rgba(214,176,114,.45)}
+.cx-screen{position:absolute;inset:var(--bz);overflow:hidden;border-radius:calc(var(--pr) - var(--bz));
+  background:radial-gradient(120% 70% at 50% 32%,#211b12,#0a0a0c 62%,#060607)}
+.cx-island{position:absolute;top:calc(var(--pw) * .05);left:50%;z-index:2;width:30%;height:calc(var(--pw) * .07);translate:-50% 0;border-radius:99px;background:#000}
+.cx-home{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:calc(var(--pw) * .03);font-family:Inter,sans-serif;direction:ltr}
+.cx-home img{width:62%;filter:drop-shadow(0 10px 24px #000)}
+.cx-home b{font-size:calc(var(--pw) * .1);font-weight:700;letter-spacing:.3em;margin-inline-start:.3em;color:var(--text)}
+.cx-home small{font-size:calc(var(--pw) * .034);letter-spacing:.42em;margin-inline-start:.42em;color:var(--gold)}
+.cx-glare{position:absolute;inset:-40% -60%;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.09) 48%,rgba(255,255,255,.02) 54%,transparent 60%)}
+
+/* Layers: each one is a full phone screen of real site content */
+.cine .hcard{position:absolute;left:calc(var(--sw) / -2);top:calc(var(--sh) / -2);width:var(--sw);height:var(--sh);padding:0;border:0;border-radius:0;
+  background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;animation:none;font-family:var(--font);text-align:start}
+.cx-scr{position:absolute;inset:0;overflow:hidden;border-radius:calc(var(--pr) - var(--bz));box-shadow:0 0 0 1px rgba(214,176,114,.45),0 40px 80px -30px #000}
+.cx-web{background:#f5f0e8}
+.cx-web .site{animation:none}
+.cx-scr.app{padding:34px 12px 60px}
+.cx-qr{position:absolute;inset-inline:12px;bottom:12px;display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(214,176,114,.3)}
+.cx-qr .qr-w{flex:none;width:30%;padding:4px;border-radius:6px;background:#fff}
+.cx-qr .qr-w svg{display:block;width:100%;height:auto}
+.cx-qr b{font-size:10px;line-height:1.3;color:var(--gold-hi)}
+.cx-gift{background:#fffaf2;color:#5a1226}
+.cx-gift>img{width:100%;height:46%;object-fit:cover}
+.cx-letter{display:grid;gap:4px;padding:18px 14px;text-align:center}
+.cx-letter span{font-size:9px;letter-spacing:.24em;color:#a8344f;direction:ltr}
+.cx-letter b{font-size:17px}
+.cx-letter p{font-size:11px;line-height:1.5;color:#7a3a4a}
+.cx-letter em{font-size:10px;color:#a8344f}
+.cx-heart{position:absolute;top:calc(46% - 17px);inset-inline-end:14px;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#c74a6a;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+.cx-heart svg{width:16px;height:16px}
+.cx-music{display:grid;align-content:start;gap:12px;padding:16px 14px;color:var(--text);background:linear-gradient(180deg,#17131f,#0b0a10)}
+.cx-music>img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px}
+
+/* Service name beside each layer (motion only; data-side is set from the layer's final position) */
+.cx-label{position:absolute;top:50%;left:calc(100% + 24px);translate:0 -50%;display:none;align-items:center;gap:10px;padding:10px 20px;border-radius:999px;
+  white-space:nowrap;font-size:26px;font-weight:600;color:var(--text);background:rgba(14,14,18,.72);border:1px solid rgba(214,176,114,.5);box-shadow:0 20px 40px -20px #000}
+.cx-label i{width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold)}
+.cx-layer[data-side=l] .cx-label{left:auto;right:calc(100% + 24px)}
+
+/* Still scene: the layers fanned behind the phone, names listed below */
+.cx-layer{transform-origin:50% 140%;transform:translateZ(-30px) translateY(var(--fy,0)) rotate(var(--fan,0deg))}
+.cx-layer[data-l=web]{--fan:-34deg}.cx-layer[data-l=apps]{--fan:-17deg}.cx-layer[data-l=menus]{--fan:17deg}.cx-layer[data-l=gifts]{--fan:34deg}.cx-layer[data-l=music]{--fy:-9%}
+.cine .stage{margin-bottom:70px}
+.cx-legend{position:absolute;inset-inline:0;bottom:-66px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;padding:0 var(--gut)}
+.cx-legend li{padding:6px 14px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--gold-hi);background:rgba(14,14,18,.6);border:1px solid rgba(214,176,114,.35)}
+.cx-end{display:none}
+
+/* Motion: a full-screen pinned stage; GSAP owns every transform from here */
+.m-on .hero.cine{height:100svh;min-height:600px;padding:0;overflow:hidden}
+.m-on .cine .hero-copy{position:absolute;inset:0;z-index:2;display:block;max-width:none;padding:0;pointer-events:none}
+.m-on .cine .hero-copy>*{pointer-events:auto}
+.m-on .cine .pill-eb{position:absolute;top:calc(var(--nav-h) + 24px);left:50%;translate:-50% 0;white-space:nowrap}
+.m-on .cine .h-hero{position:absolute;inset-inline:var(--gut);top:50%;translate:0 -50%;z-index:1;display:grid;grid-template-columns:1fr calc(var(--pw) + 7vw) 1fr;align-items:center;
+  font-size:clamp(3rem,6.2vw,7rem);pointer-events:none}
+html.m-on[lang=ar] .cine .h-hero{font-size:clamp(2.8rem,5.6vw,6rem)}
+.m-on .cine .h-hero .ln:first-child{grid-column:1;justify-self:end}
+.m-on .cine .h-hero .ln.gold{grid-column:3;justify-self:start}
+/* The intro paragraph sits beside the phone (its width stops short of it); the buttons sit centred under the phone,
+   where the closing invitation appears at the end of the story */
+.m-on .cine .cx-foot{position:absolute;inset:0;display:block;pointer-events:none;
+  --s:max(var(--gut),calc(50% - var(--wrap) / 2 + var(--gut)))}
+.m-on .cine .cx-foot>*{pointer-events:auto}
+.m-on .cine .cx-foot .lead{position:absolute;inset-inline-start:var(--s);bottom:176px;width:min(30rem,calc(50% - var(--pw) / 2 - 3vw - var(--s)));
+  margin:0;font-size:1rem;text-align:start}
+.m-on .cine .cx-foot .cta-row,.m-on .cine .cx-end{position:absolute;inset-inline:var(--gut);bottom:92px;margin:0;display:flex;justify-content:center;flex-wrap:nowrap}
+.m-on .cine .stage{position:absolute;inset:0;height:auto;margin:0}
+.m-on .cine .cx-layer{transform-origin:50% 50%}
+.m-on .cine .cx-label{display:inline-flex}
+.m-on .cine .cx-legend{display:none}
+.m-on .cine .cx-end{z-index:4;visibility:hidden;opacity:0}
+.hero-live .wa-fab,.hero-live .to-top{opacity:0!important;visibility:hidden!important}
+.m-on .cine .cx-end .cta-row{justify-content:center;flex-wrap:nowrap;margin:0}
+
+@media (max-width:860px){
+  .cine{--pw:min(44vw,26svh)}
+  .cx-layer[data-l=web]{--fan:-22deg}.cx-layer[data-l=apps]{--fan:-11deg}.cx-layer[data-l=menus]{--fan:11deg}.cx-layer[data-l=gifts]{--fan:22deg}
+  .m-on .cine .pill-eb{display:none}
+  .m-on .cine .h-hero{top:calc(var(--nav-h) + 30px);translate:none;grid-template-columns:1fr;font-size:clamp(2.4rem,11vw,3.6rem)}
+  html.m-on[lang=ar] .cine .h-hero{font-size:clamp(2.2rem,10vw,3.2rem)}
+  .m-on .cine .h-hero .ln:first-child,.m-on .cine .h-hero .ln.gold{grid-column:1;justify-self:center}
+  .m-on .cine .cx-cam{top:55%}
+  /* The intro paragraph stays readable to screen readers; the story needs the room on small screens */
+  .m-on .cine .cx-foot .lead{width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .m-on .cine .cx-foot .cta-row,.m-on .cine .cx-end{inset-inline:12px;bottom:66px}
+  .m-on .cine .cta-row{gap:8px}
+  .m-on .cine .cta-row .btn-lg{--h:46px;padding-inline:14px;font-size:13.5px;gap:8px}
+  .m-on .cine .cx-label{top:calc(100% + 16px);left:50%;right:auto;translate:-50% 0;font-size:30px}
+  .m-on .cine .cx-layer[data-side=l] .cx-label{left:50%;right:auto}
+}
+@media print{.cine .stage{display:none}}
