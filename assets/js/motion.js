@@ -11,14 +11,18 @@
   const d = document.documentElement;
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const small = !fine || matchMedia('(max-width: 860px)').matches; // phones/tablets: shorter, lighter motion
+  const small = !fine || matchMedia('(max-width: 860px)').matches; // phones/tablets: same story, phone-sized layout
   const view = v => $(`main > [data-view="${v}"]`);
   const dir = () => (d.dir === 'rtl' ? -1 : 1);
+  const conn = navigator.connection, saveData = !!(conn && conn.saveData);
   d.classList.add('m-on');
+  // Mobile address bars resize the viewport while scrolling; don't re-measure the pinned story for that
+  ST.config({ ignoreMobileResize: true });
 
   // ---------- Smooth scrolling (Lenis) on GSAP's clock, so pinned and scrubbed scenes stay in step ----------
-  // Touch keeps the device's native scrolling; site.js routes its programmatic scrolls through WASLMotion.lenis.
-  if (window.Lenis) {
+  // Mouse and trackpad only: touch keeps the device's own scrolling, which is already smooth and never lags the finger.
+  // site.js routes its programmatic scrolls through WASLMotion.lenis when it exists.
+  if (window.Lenis && fine) {
     const lenis = new window.Lenis({ lerp: .1, smoothWheel: true });
     lenis.on('scroll', ST.update);
     G.ticker.add(t => lenis.raf(t * 1000));
@@ -60,10 +64,11 @@
     introPlayed = true;
     const ar = d.lang === 'ar';
     G.timeline({ defaults: { ease: 'power4.out' } })
-      .fromTo(pieces, { opacity: 0, yPercent: 60, rotateX: small ? 0 : -55, transformPerspective: 700, filter: small ? 'none' : 'blur(10px)' },
-        { opacity: 1, yPercent: 0, rotateX: 0, filter: 'blur(0px)', duration: small ? .8 : 1.15, stagger: ar ? .09 : (small ? .02 : .032), clearProps: 'filter,transform' }, .15)
-      .fromTo(heroIntro, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .9, ease: 'power3.out', stagger: .08, clearProps: 'transform' }, small ? .35 : .55)
-      .fromTo(stage, { opacity: 0, y: small ? 40 : 80, scale: .94 }, { opacity: 1, y: 0, scale: 1, duration: 1.6, ease: 'expo.out', clearProps: 'transform' }, .25)
+      // Phones get the same 3D letter turn; only the blur (a filter, costly to animate there) stays on larger screens
+      .fromTo(pieces, { opacity: 0, yPercent: 60, rotateX: -55, transformPerspective: 700, filter: small ? 'none' : 'blur(10px)' },
+        { opacity: 1, yPercent: 0, rotateX: 0, filter: small ? 'none' : 'blur(0px)', duration: 1.15, stagger: ar ? .09 : .032, clearProps: 'filter,transform' }, .15)
+      .fromTo(heroIntro, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .9, ease: 'power3.out', stagger: .08, clearProps: 'transform' }, .55)
+      .fromTo(stage, { opacity: 0, y: 80, scale: .94 }, { opacity: 1, y: 0, scale: 1, duration: 1.6, ease: 'expo.out', clearProps: 'transform' }, .25)
       .fromTo(glow, { opacity: 0 }, { opacity: 1, duration: 2, ease: 'power2.out' }, .2);
   }
   const stage = $('.hero .stage'), glow = $('.cx-glow');
@@ -72,20 +77,21 @@
   G.set([...heroIntro, stage, glow].filter(Boolean), { opacity: 0 });
 
   // ---------- Scroll reveals (.rv, .rise), set up per view the first time it is shown ----------
+  // The same on every screen, and transform/opacity only so the compositor does the work.
   // Opacity only (never visibility), so content stays reachable by keyboard before it is revealed.
   // Hidden views measure as zero height, so their triggers would fire at once: only the shown view's triggers stay enabled.
   const triggers = {};
   function reveal(batch) {
     const heads = batch.filter(e => e.matches('.h-sec')), rest = batch.filter(e => !e.matches('.h-sec'));
     batch.forEach(e => { e.style.transition = 'none'; e.classList.add('in'); });
-    const done = () => batch.forEach(e => { G.set(e, { clearProps: 'opacity,transform,clipPath' }); e.style.transition = ''; });
-    const dist = small ? .55 : 1;
+    const done = () => batch.forEach(e => { G.set(e, { clearProps: 'opacity,transform' }); e.style.transition = ''; });
     if (rest.length) G.fromTo(rest,
-      { opacity: 0, y: (i, e) => (e.classList.contains('rise') ? 60 : 32) * dist, scale: (i, e) => e.classList.contains('rise') ? .97 : 1 },
-      { opacity: 1, y: 0, scale: 1, duration: small ? .8 : 1.15, ease: 'power3.out', stagger: .09, overwrite: true, onComplete: heads.length ? null : done });
+      { opacity: 0, y: (i, e) => (e.classList.contains('rise') ? 60 : 32), scale: (i, e) => e.classList.contains('rise') ? .97 : 1 },
+      { opacity: 1, y: 0, scale: 1, duration: 1.15, ease: 'power3.out', stagger: .09, overwrite: true, onComplete: heads.length ? null : done });
+    // Section titles rise and straighten from a slight tilt
     if (heads.length) G.fromTo(heads,
-      { opacity: 0, y: 40 * dist, clipPath: 'inset(0% 0% 100% 0%)' },
-      { opacity: 1, y: 0, clipPath: 'inset(0% 0% -20% 0%)', duration: small ? .9 : 1.3, ease: 'expo.out', stagger: .1, overwrite: true, onComplete: done });
+      { opacity: 0, yPercent: 45, rotateX: -35, transformPerspective: 800, transformOrigin: '50% 100%' },
+      { opacity: 1, yPercent: 0, rotateX: 0, duration: 1.3, ease: 'expo.out', stagger: .1, overwrite: true, onComplete: done });
   }
   function setupReveals(v) {
     Object.keys(triggers).forEach(k => { if (k !== v) triggers[k].forEach(t => t.disable(false)); });
@@ -99,12 +105,13 @@
   // then return into the phone and the invitation appears. Positions are fractions of the viewport (x mirrors in RTL).
   let h3d = null;
   const LAYERS = small ? {
+    // Phones: the same 3D story, placed for a tall screen
     //       x     y     z  rotY rotZ scale
-    web:   [-.29, -.2,   0,   0,  -8, .4],
-    apps:  [ .29, -.22,  0,   0,   8, .38],
-    menus: [-.29,  .16,  0,   0,   6, .38],
-    gifts: [ .29,  .18,  0,   0,  -6, .4],
-    music: [ 0,   -.33,  0,   0,   0, .36]
+    web:   [-.26, -.2,   50,  22,  -6, .4],
+    apps:  [ .26, -.22,  10, -20,   6, .38],
+    menus: [-.26,  .16, -30,  24,   4, .38],
+    gifts: [ .26,  .18,  50, -24,  -4, .4],
+    music: [ 0,   -.33, -60,   0,   0, .36]
   } : {
     web:   [-.3,  -.21, 140,  24,  -6, .56],
     apps:  [ .29, -.24,  20, -22,   6, .52],
@@ -122,9 +129,11 @@
     const sides = () => layers.forEach(el => { el.dataset.side = P(el)[0] * dir() < 0 ? 'l' : 'r'; });
     sides();
     const W = () => innerWidth, H = () => innerHeight;
+    // Phones: light CSS gold dust instead of WebGL (each dot only moves and fades, on the compositor)
+    const dust = small && !saveData ? makeDust() : null;
     const tl = G.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
-      trigger: hero, start: 'top top', end: () => '+=' + H() * (small ? 1.8 : 3), pin: true, anticipatePin: 1,
-      scrub: small ? .6 : 1, invalidateOnRefresh: true, onRefresh: sides,
+      trigger: hero, start: 'top top', end: () => '+=' + H() * 3, pin: true, anticipatePin: 1,
+      scrub: 1, invalidateOnRefresh: true, onRefresh: sides,
       // The story ends with its own WhatsApp button: the floating buttons step aside while it plays
       onToggle: s => d.classList.toggle('hero-live', s.isActive),
       onUpdate: s => h3d && h3d.setProgress(s.progress) } });
@@ -132,11 +141,12 @@
     // 1. The title steps back and the phone turns to the light
     tl.to(foot, { autoAlpha: 0, y: 24, duration: .6 }, .2)
       .to(marq, { autoAlpha: 0, duration: .5 }, .2)
-      .to(lnA, { x: () => -dir() * W() * (small ? 0 : .05), opacity: .12, duration: 1.4 }, .3)
-      .to(lnB, { x: () => dir() * W() * (small ? 0 : .05), opacity: .12, duration: 1.4 }, .3)
-      .to(phone, { rotationY: () => dir() * (small ? 0 : -16), rotationX: small ? 0 : 6, scale: small ? .72 : .86, duration: 2, ease: 'power2.inOut' }, .6)
+      .to(lnA, { x: () => -dir() * W() * (small ? 0 : .05), y: small ? -24 : 0, opacity: .12, duration: 1.4 }, .3)
+      .to(lnB, { x: () => dir() * W() * (small ? 0 : .05), y: small ? -24 : 0, opacity: .12, duration: 1.4 }, .3)
+      .to(phone, { rotationY: () => dir() * (small ? -14 : -16), rotationX: small ? 5 : 6, scale: small ? .72 : .86, duration: 2, ease: 'power2.inOut' }, .6)
       .to(glow, { scale: 1.25, duration: 2, ease: 'power2.inOut' }, .6)
       .fromTo(glare, { xPercent: -30 }, { xPercent: 30, duration: 8 }, .6);
+    if (dust) tl.to(dust, { scale: 1.35, opacity: 1, duration: 2, ease: 'power2.inOut' }, .6).to(dust, { scale: 1, opacity: .6, duration: 2, ease: 'power2.inOut' }, 6.4);
     // 2. The layers leave the phone, each to its own place in the air
     layers.forEach((el, i) => {
       const at = .8 + i * .12;
@@ -147,8 +157,8 @@
     });
     tl.fromTo(labels, { opacity: 0 }, { opacity: 1, duration: .6, stagger: .08 }, 2.8);
     // 3. They drift while the camera turns slowly around the phone
-    tl.to(cam, { rotationY: () => dir() * (small ? 0 : 10), rotationX: small ? 0 : -4, duration: 2.6, ease: 'sine.inOut' }, 3.4);
-    layers.forEach((el, i) => tl.to(el, { z: small ? '+=0' : '+=60', y: i % 2 ? '-=14' : '+=14', rotationZ: i % 2 ? '+=3' : '-=3', duration: 2.6, ease: 'sine.inOut' }, 3.4));
+    tl.to(cam, { rotationY: () => dir() * (small ? 8 : 10), rotationX: small ? -3 : -4, duration: 2.6, ease: 'sine.inOut' }, 3.4);
+    layers.forEach((el, i) => tl.to(el, { z: small ? '+=20' : '+=60', y: i % 2 ? '-=14' : '+=14', rotationZ: i % 2 ? '+=3' : '-=3', duration: 2.6, ease: 'sine.inOut' }, 3.4));
     // 4. Everything returns into the phone
     tl.to(labels, { opacity: 0, duration: .4 }, 6)
       .to(cam, { rotationY: 0, rotationX: 0, duration: 2, ease: 'power2.inOut' }, 6.2);
@@ -160,14 +170,31 @@
     tl.to(phone, { rotationY: 0, rotationX: 0, scale: 1, duration: 2, ease: 'power2.inOut' }, 6.4)
       .to(glow, { scale: 1, duration: 2, ease: 'power2.inOut' }, 6.4)
     // 5. The title comes back and the invitation appears
-      .to([lnA, lnB], { x: 0, opacity: 1, duration: 1 }, 7.8)
+      .to([lnA, lnB], { x: 0, y: 0, opacity: 1, duration: 1 }, 7.8)
       .fromTo(end, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: .8, ease: 'power3.out' }, 8.4)
       .to({}, { duration: .6 }); // a short hold on the finished phone before the page moves on
     document.addEventListener('wasl:lang', () => { sides(); });
   }
+  function makeDust() {
+    const box = document.createElement('div');
+    box.className = 'cx-dust'; box.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 18; i++) {
+      const a = Math.random() * Math.PI * 2, r = 22 + Math.random() * 30; // a ring around the phone, clear of its middle
+      const s = box.appendChild(document.createElement('i')).style;
+      s.setProperty('--x', (50 + Math.cos(a) * r).toFixed(1) + '%');
+      s.setProperty('--y', (52 + Math.sin(a) * r * 1.1).toFixed(1) + '%');
+      s.setProperty('--s', (2 + Math.random() * 3.5).toFixed(1) + 'px');
+      s.setProperty('--dx', ((Math.random() - .5) * 40).toFixed(0) + 'px');
+      s.setProperty('--dy', (-10 - Math.random() * 40).toFixed(0) + 'px');
+      s.setProperty('--t', (4 + Math.random() * 5).toFixed(1) + 's');
+      s.setProperty('--d', (-Math.random() * 8).toFixed(1) + 's');
+    }
+    $('.hero-bg', hero).append(box);
+    return box;
+  }
   if (hero) cinematic();
   // Photo plates: the photo settles from a slight zoom while its section crosses the screen
-  if (!small) $$('.plate img').forEach(img => G.fromTo(img, { scale: 1.14, yPercent: -3 }, { scale: 1.02, yPercent: 3, ease: 'none',
+  $$('.plate img').forEach(img => G.fromTo(img, { scale: 1.14, yPercent: -3 }, { scale: 1.02, yPercent: 3, ease: 'none',
     scrollTrigger: { trigger: img.closest('.scene, .page-hero'), start: 'top bottom', end: 'bottom top', scrub: .6 } }));
 
   // ---------- Hover: magnetic buttons and a gold edge light that follows the pointer ----------
@@ -193,12 +220,9 @@
     // Home: only elements the pinned hero timeline does not drive (its overwrite would cut that timeline)
     let items = v === 'home' ? $$('.hero-copy > .pill-eb, .hero-copy > .h-hero, .hero .stage', root) :$$('.page-hero .ph-txt > *, .page-hero .ph-vis, .page-hero > .wrap:not(.ph-grid) > *', root);
     if (!items.length) items = $$('section > .wrap > *', root).slice(0, 6);
-    if (!small) {
-      const dir = d.dir === 'rtl' ? -1 : 1;
-      G.fromTo(veil, { xPercent: 0, opacity: 1 }, { xPercent: 100 * dir, duration: .8, ease: 'power3.inOut', clearProps: 'transform,opacity' });
-    }
+    G.fromTo(veil, { xPercent: 0, opacity: 1 }, { xPercent: 100 * dir(), duration: .8, ease: 'power3.inOut', clearProps: 'transform,opacity' });
     // Opacity, not visibility: the page's h1 has just received focus and must keep it.
-    G.fromTo(items, { opacity: 0, y: small ? 16 : 30 }, { opacity: 1, y: 0, duration: small ? .6 : .95, ease: 'power3.out', stagger: .07, delay: small ? 0 : .22, overwrite: true, clearProps: 'opacity,transform' });
+    G.fromTo(items, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .95, ease: 'power3.out', stagger: .07, delay: .22, overwrite: true, clearProps: 'opacity,transform' });
   }
 
   let first = true;
@@ -218,9 +242,9 @@
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ST.refresh());
 
-  // ---------- Three.js gold particles behind the phone: desktop pointers only, loaded after the page is idle ----------
-  const conn = navigator.connection;
-  if (!small && hero && !(conn && conn.saveData)) {
+  // ---------- Three.js gold particles behind the phone: larger screens only, loaded after the page is idle ----------
+  // (phones get the CSS dust above; Data Saver gets neither)
+  if (!small && hero && !saveData) {
     const load = () => import('./hero3d.js').then(m => {
       h3d = m.mount(hero, $('.hero-bg'));
       if (h3d) d.classList.add('has-3d');

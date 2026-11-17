@@ -538,7 +538,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opa
 
 /* ---------- Hero v4 ---------- */
 .hero{min-height:100svh;padding:calc(var(--nav-h) + 56px) 0 120px;align-items:center}
-.hero-bg .aurora{position:absolute;border-radius:50%;filter:blur(70px);opacity:.75}
+/* No blur filter: the gradients are already soft, and an animated blur repaints every frame (measured: 20 fps on phones) */
+.hero-bg .aurora{position:absolute;border-radius:50%;opacity:.75}
 .hero-bg .a1{width:780px;height:560px;inset-inline-end:-180px;top:-160px;background:radial-gradient(closest-side,rgba(214,176,114,.32),transparent);animation:drift 22s var(--ease) infinite alternate}
 .hero-bg .a2{width:620px;height:520px;inset-inline-start:-220px;bottom:-200px;background:radial-gradient(closest-side,rgba(120,110,255,.16),transparent);animation:drift 26s var(--ease) infinite alternate-reverse}
 .hero-bg .gridl{opacity:.38;mask-image:radial-gradient(ellipse 70% 70% at 60% 45%,#000 10%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 70% 70% at 60% 45%,#000 10%,transparent 75%)}
@@ -1136,7 +1137,7 @@ html[lang=ar] .cine .h-hero{font-size:clamp(2.6rem,6.6vw,6.6rem);line-height:1.2
 
 /* Service name beside each layer (motion only; data-side is set from the layer's final position) */
 .cx-label{position:absolute;top:50%;left:calc(100% + 24px);translate:0 -50%;display:none;align-items:center;gap:10px;padding:10px 20px;border-radius:999px;
-  white-space:nowrap;font-size:26px;font-weight:600;color:var(--text);background:rgba(14,14,18,.72);border:1px solid rgba(214,176,114,.5);box-shadow:0 20px 40px -20px #000}
+  white-space:nowrap;font-size:clamp(19px,1.8vw,26px);font-weight:600;color:var(--text);background:rgba(14,14,18,.72);border:1px solid rgba(214,176,114,.5);box-shadow:0 20px 40px -20px #000}
 .cx-label i{width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold)}
 .cx-layer[data-side=l] .cx-label{left:auto;right:calc(100% + 24px)}
 
@@ -1171,6 +1172,16 @@ html.m-on[lang=ar] .cine .h-hero{font-size:clamp(2.8rem,5.6vw,6rem)}
 .m-on .cine .cx-label{display:inline-flex}
 .m-on .cine .cx-legend{display:none}
 .m-on .cine .cx-end{z-index:4;visibility:hidden;opacity:0}
+/* The hero's looping animations stop while it is off screen (site.js toggles .paused) */
+.hero.paused *{animation-play-state:paused!important}
+/* Phones: CSS gold dust (created by motion.js); each dot only moves and fades */
+.cx-dust{position:absolute;inset:0;opacity:.6}
+.cx-dust i{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;
+  background:radial-gradient(circle,#f3dfae,rgba(214,176,114,.5) 45%,transparent 70%);
+  animation:dust var(--t) var(--d) ease-in-out infinite alternate}
+@keyframes dust{from{transform:translate3d(0,0,0);opacity:.2}to{transform:translate3d(var(--dx),var(--dy),0);opacity:.95}}
+/* Touch screens: the two large background lights hold still (their slow drift cost ~7 fps on a mid-range phone) */
+@media (max-width:860px),(hover:none){.hero-bg .aurora{animation:none}}
 .hero-live .wa-fab,.hero-live .to-top{opacity:0!important;visibility:hidden!important}
 .m-on .cine .cx-end .cta-row{justify-content:center;flex-wrap:nowrap;margin:0}
 
@@ -1182,12 +1193,13 @@ html.m-on[lang=ar] .cine .h-hero{font-size:clamp(2.8rem,5.6vw,6rem)}
   html.m-on[lang=ar] .cine .h-hero{font-size:clamp(2.2rem,10vw,3.2rem)}
   .m-on .cine .h-hero .ln:first-child,.m-on .cine .h-hero .ln.gold{grid-column:1;justify-self:center}
   .m-on .cine .cx-cam{top:55%}
+  .cine .stage{perspective:1000px} /* a closer camera, so depth reads on a narrow screen */
   /* The intro paragraph stays readable to screen readers; the story needs the room on small screens */
   .m-on .cine .cx-foot .lead{width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .m-on .cine .cx-foot .cta-row,.m-on .cine .cx-end{inset-inline:12px;bottom:66px}
   .m-on .cine .cta-row{gap:8px}
   .m-on .cine .cta-row .btn-lg{--h:46px;padding-inline:14px;font-size:13.5px;gap:8px}
-  .m-on .cine .cx-label{top:calc(100% + 16px);left:50%;right:auto;translate:-50% 0;font-size:30px}
+  .m-on .cine .cx-label{top:calc(100% + 16px);left:50%;right:auto;translate:-50% 0;font-size:27px;padding:9px 16px}
   .m-on .cine .cx-layer[data-side=l] .cx-label{left:50%;right:auto}
 }
 @media print{.cine .stage{display:none}}
